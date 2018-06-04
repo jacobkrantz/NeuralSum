@@ -1,0 +1,8 @@
+{
+	"log_level": "info",
+	"rouge": {
+		"reporting_metric": "recall",
+		"output_report": true,
+		"reports_folder": "../data/out/rouge_reports/"
+	}
+}
