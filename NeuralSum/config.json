@@ -13,5 +13,6 @@
 														"dr.", "ms.", "et.",
 														"No."],
 	"duc4_eval_folder": "../data/duc2004/eval/",
-	"duc3_eval_folder": "../data/duc2003/abstracts/models/"
+	"duc3_eval_folder": "../data/duc2003/abstracts/models/",
+	"glove_embeddings_file": "../data/glove_embeddings/glove.6B.50d.txt"
 }

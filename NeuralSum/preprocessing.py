@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import nltk.data
 from random import shuffle
 import os
+from numpy import asarray
 """
 Provides utilities to load and preprocess all of the data used in the project.
 Filename: 'preprocessing.py'
@@ -13,6 +14,8 @@ Methods:
     - parse_duc_2003()
     - parse_duc_2004()
     - display_articles(articles, number_to_display, random=False)
+    - load_word_embeddings()
+    - get_vocab_size(articles)
 """
 
 def parse_duc_2004():
@@ -41,6 +44,35 @@ def display_articles(articles, number_to_display, random=False):
         print articles[i]
         print ""
 
+def load_word_embeddings():
+    """
+    Reads all of the word embeddings (GloVe) into a dictionary.
+    """
+    embeddings = dict()
+    with open(config['glove_embeddings_file'], 'r') as f:
+        for line in f:
+            values = line.split()
+            word = values[0]
+            coefs = asarray(values[1:], dtype='float32',)
+            embeddings[word] = coefs
+
+    return embeddings
+
+def get_vocabulary(articles):
+    """
+    Decision here: what words to include in the vocabulary. We don't want to
+        use the entire GloVe vector set, because the model would be too large.
+    For now we will just extract the words from both the sentences and the
+        gold standard summaries. This will need to be changed, because using
+        the human summaries from test to generate the vocab is dubious practice.
+    """
+    vocab = set()
+    vocab_size = 0
+    for article in articles[0:5]:
+        sentence = article.sentence
+        print sentence
+
+    return vocab, vocab_size
 
 
 def _get_duc_sentences_2004():
@@ -70,7 +102,7 @@ def _get_duc_sentences_2004():
             article = DucArticle()
             article.id = parsed_html.docno.string.rstrip().lstrip().replace('\n', ' ').encode('ascii','ignore')
             article.folder = filename.lstrip(config["duc4_sentences_folder"])[:5]
-            article.sentence = sentence
+            article.sentence = _tokenize_sentence_generic(sentence)
             articles.append(article)
 
     return articles
@@ -127,7 +159,9 @@ def _get_duc_sentences_2003():
             article = DucArticle()
             article.id = parsed_html.docno.string.rstrip().lstrip().replace('\n', ' ').encode('ascii','ignore')
             article.folder = filename.split('/')[4][:-1].upper()
-            article.sentence = _tokenize_sentence(sentences)
+            article.sentence = _tokenize_sentence_generic(
+                _tokenize_sentence_2003(sentences)
+            )
             articles.append(article)
 
     return articles
@@ -153,7 +187,7 @@ def _add_duc_summaries_2003(articles):
 
     return articles
 
-def _tokenize_sentence(sentence):
+def _tokenize_sentence_2003(sentence):
     if sentence[0].split()[-1] not in config["duc_ending_exceptions"]:
         tokenized = sentence[0]
     else:
@@ -169,3 +203,14 @@ def _tokenize_sentence(sentence):
     else:
         tokenized = tokenized.split('_')[-1]
     return tokenized.encode('ascii','ignore').rstrip().lstrip().replace('\n',' ').replace('\t', ' ')
+
+def _tokenize_sentence_generic(sentence):
+    """
+    space out 's and contractions isn't -> is n't or -> isnt
+    space out all punctuation
+    remove quotations
+    replace all numbers with ... something...
+    """
+    sen = sentence.lower().split()
+    # print sen
+    return sentence

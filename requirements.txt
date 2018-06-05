@@ -1,5 +1,5 @@
-# numpy
 # scipy>=0.9
 rouge==0.3.0
 beautifulsoup4
 nltk
+numpy

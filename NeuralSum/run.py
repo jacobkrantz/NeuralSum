@@ -1,7 +1,7 @@
 
 from config import config
 from evaluation import test_article, test_all_articles
-from preprocessing import parse_duc_2004, parse_duc_2003, display_articles
+from preprocessing import parse_duc_2004, parse_duc_2003, display_articles, load_word_embeddings, get_vocabulary
 
 import logging as log
 import sys
@@ -27,14 +27,21 @@ def dev_test():
     # test_all([h,h1], [r,r1])
 
 def train():
-    # load training data
     log.info("Starting step: load testing data")
+
     duc_2003_articles = parse_duc_2003()
+    duc_2004_articles = parse_duc_2004()
+    log.debug("Starting step: load word embeddings.")
+
+    embeddings = load_word_embeddings()
+
+    vocab, vocab_size = get_vocabulary(duc_2003_articles + duc_2004_articles)
+    # log.debug("Finished step: loaded %s word embeddings." % len(embeddings))
     log.info("Finished step: load testing data")
+
     # construct model
     # train model with data
     # save model & weights to files
-    raise NotImplementedError('no model built yet')
 
 def test():
     # load model
