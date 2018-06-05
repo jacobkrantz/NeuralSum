@@ -4,5 +4,10 @@
 		"reporting_metric": "recall",
 		"output_report": true,
 		"reports_folder": "../data/out/rouge_reports/"
-	}
+	},
+	"duc_sentences_folder": "../data/duc2004/raw/docs/",
+	"duc_ending_exceptions": ["B.J.", "mr.", "mrs.",
+														"Mr.", "Mrs.", "Dr.",
+														"Ms."],
+	"duc_eval_folder": "../data/duc2004/raw/eval/"
 }
