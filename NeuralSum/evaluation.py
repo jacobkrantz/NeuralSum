@@ -18,9 +18,9 @@ def test_single(hypothesis, reference, type='recall'):
     rouge = Rouge()
     scores = rouge.get_scores(hypothesis, reference)[0]
     scores = {
-        'rouge-1':scores['rouge-1'][type[0]],
-        'rouge-2':scores['rouge-2'][type[0]],
-        'rouge-l':scores['rouge-l'][type[0]]
+        'rouge-1':"{0:.2f}".format(scores['rouge-1'][type[0]] * 100),
+        'rouge-2':"{0:.2f}".format(scores['rouge-2'][type[0]] * 100),
+        'rouge-l':"{0:.2f}".format(scores['rouge-l'][type[0]] * 100)
     }
     if config['rouge']['output_report']:
         output_rouge_report(scores, type)

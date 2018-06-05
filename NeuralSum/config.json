@@ -5,9 +5,13 @@
 		"output_report": true,
 		"reports_folder": "../data/out/rouge_reports/"
 	},
-	"duc_sentences_folder": "../data/duc2004/raw/docs/",
+	"duc4_sentences_folder": "../data/duc2004/docs/",
+	"duc3_sentences_folder": "../data/duc2003/docs/",
 	"duc_ending_exceptions": ["B.J.", "mr.", "mrs.",
 														"Mr.", "Mrs.", "Dr.",
-														"Ms."],
-	"duc_eval_folder": "../data/duc2004/raw/eval/"
+														"Ms.", "Drs.", "drs.",
+														"dr.", "ms.", "et.",
+														"No."],
+	"duc4_eval_folder": "../data/duc2004/eval/",
+	"duc3_eval_folder": "../data/duc2003/abstracts/models/"
 }

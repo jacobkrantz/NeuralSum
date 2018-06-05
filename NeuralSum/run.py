@@ -1,18 +1,20 @@
 
 from evaluation import test_single, test_all
-from preprocessing import parse_duc
+from preprocessing import parse_duc_2004,parse_duc_2003, display_articles
 
 from config import config
 import sys
 
 def dev_test():
     # preprocessing tasks
-    articles = parse_duc()
-
-    # h = "Cambodian government rejects opposition's call for talks abroad"
+    duc_2004_articles = parse_duc_2004()
+    duc_2003_articles = parse_duc_2003()
+    display_articles(duc_2003_articles, 3, random=False)
+    #
+    # h = "Cambodian government rejects opposition 's call for talks abroad"
     # r = "Cambodian leader Hun Sen rejects opposition demands for talks in Beijing."
     # test_single(h,r)
-
+    # print test_single(h,r)
     # print('')
     # test_all([h,h1], [r,r1])
 
