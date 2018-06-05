@@ -6,6 +6,7 @@ class DucArticle:
         self.folder = folder
         self.sentence = sentence
         self.gold_summaries = gold_summaries
+        self.generated_summary = ""
 
     def word_count(self):
         return len(self.sentence.split())

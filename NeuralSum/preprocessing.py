@@ -6,6 +6,14 @@ from bs4 import BeautifulSoup
 import nltk.data
 from random import shuffle
 import os
+"""
+Provides utilities to load and preprocess all of the data used in the project.
+Filename: 'preprocessing.py'
+Methods:
+    - parse_duc_2003()
+    - parse_duc_2004()
+    - display_articles(articles, number_to_display, random=False)
+"""
 
 def parse_duc_2004():
     """
