@@ -3,6 +3,7 @@ from config import config
 from ducArticle import DucArticle
 
 from bs4 import BeautifulSoup
+from collections import Counter
 import nltk.data
 from random import shuffle
 import os
@@ -15,7 +16,11 @@ Methods:
     - parse_duc_2004()
     - display_articles(articles, number_to_display, random=False)
     - load_word_embeddings()
-    - get_vocab_size(articles)
+    - get_vocabulary(articles)
+    - get_max_sentence_len(articles)
+    - get_max_summary_len(articles)
+    - get_sen_sum_pairs(articles)
+    - fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_length=None)
 """
 
 def parse_duc_2004():
@@ -62,17 +67,148 @@ def get_vocabulary(articles):
     """
     Decision here: what words to include in the vocabulary. We don't want to
         use the entire GloVe vector set, because the model would be too large.
-    For now we will just extract the words from both the sentences and the
-        gold standard summaries. This will need to be changed, because using
-        the human summaries from test to generate the vocab is dubious practice.
+    possibilities:
+        - use sentences and gold summaries
+        - use entire articles
+        - use entire gigaword
+        - use just sentences
+    currently doing: use sentences and gold summaries
+    Returns:
+        set<string> vocab
     """
     vocab = set()
-    vocab_size = 0
-    for article in articles[0:5]:
-        sentence = article.sentence
-        print sentence
+    for article in articles:
+        [vocab.add(w) for w in article.sentence.split()]
+        for summary in article.gold_summaries:
+            [vocab.add(w) for w in summary.split()]
 
-    return vocab, vocab_size
+    return vocab
+
+def get_max_sentence_len(articles):
+    """
+    Get the maximum length of full sentence within the articles list.
+    Args:
+        articles (list<DucArticle>)
+    Returns:
+        int length
+    """
+    return max(map(lambda a: len(a.sentence.split()), articles))
+
+def get_max_summary_len(articles):
+    """
+    Get the maximum length of a summary within the articles list.
+    Args:
+        articles (list<DucArticle>)
+    Returns:
+        int length
+    """
+    return max([
+            max(map(lambda s: len(s.split()), art.gold_summaries))
+            for art in articles
+    ])
+
+def get_sen_sum_pairs(articles):
+    """
+    Returns two lists where the index relates the sentence to the summary.
+    Args:
+        articles (list<DucArticle>)
+    Returns:
+        list<string> sentences, list<string> summaries
+    """
+    sentences = list()
+    summaries = list()
+
+    for article in articles:
+        for sum in article.gold_summaries:
+            sentences.append(article.sentence)
+            summaries.append(sum)
+
+    assert(len(sentences) == len(summaries))
+    return sentences, summaries
+
+
+def fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_length=None):
+    """
+    This function was adapted from chen 0040 in the GitHub repository:
+        https://github.com/chen0040/keras-text-summarization
+    Args:
+        sentences (list<string>)
+        summaries (list<string>)
+        input_seq_max_length (int): defaults to config value.
+        target_seq_max_length (int): defaults to config value.
+    Returns:
+        dict of model configuration.
+    """
+    if input_seq_max_length is None:
+        input_seq_max_length = config["max_input_seq_length"]
+    if target_seq_max_length is None:
+        target_seq_max_length = config["max_target_vocal_size"]
+    input_counter = Counter()
+    target_counter = Counter()
+    max_input_seq_length = 0
+    max_target_seq_length = 0
+
+    for line in sentences:
+        text = [word.lower() for word in line.split(' ')]
+        seq_length = len(text)
+        if seq_length > input_seq_max_length:
+            text = text[0:input_seq_max_length]
+            seq_length = len(text)
+        for word in text:
+            input_counter[word] += 1
+        max_input_seq_length = max(max_input_seq_length, seq_length)
+
+    for line in summaries:
+        line2 = 'START ' + line.lower() + ' END'
+        text = [word for word in line2.split(' ')]
+        seq_length = len(text)
+        if seq_length > target_seq_max_length:
+            text = text[0:target_seq_max_length]
+            seq_length = len(text)
+        for word in text:
+            target_counter[word] += 1
+            max_target_seq_length = max(max_target_seq_length, seq_length)
+
+    input_word2idx = dict()
+    for idx, word in enumerate(input_counter.most_common(config['max_input_vocab_size'])):
+        input_word2idx[word[0]] = idx + 2
+    input_word2idx['PAD'] = 0
+    input_word2idx['UNK'] = 1
+    input_idx2word = dict([(idx, word) for word, idx in input_word2idx.items()])
+
+    target_word2idx = dict()
+    for idx, word in enumerate(target_counter.most_common(config['max_target_vocal_size'])):
+        target_word2idx[word[0]] = idx + 1
+    target_word2idx['UNK'] = 0
+
+    target_idx2word = dict([(idx, word) for word, idx in target_word2idx.items()])
+
+    return {
+        'input_word2idx': input_word2idx,
+        'input_idx2word': input_idx2word,
+        'target_word2idx': target_word2idx,
+        'target_idx2word': target_idx2word,
+        'num_input_tokens': len(input_word2idx),
+        'num_target_tokens': len(target_word2idx),
+        'max_input_seq_length': max_input_seq_length,
+        'max_target_seq_length': max_target_seq_length
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def _get_duc_sentences_2004():
@@ -125,14 +261,14 @@ def _add_duc_summaries_2004(articles):
         id = article.id
         folder = article.folder
 
-        gold_summaries = []
+        gold_sums = []
         for filename in filenames:
             if (id not in filename) or (folder not in filename):
                 continue
             with open(filename, 'r') as f:
-                gold_summaries.append(f.read().lstrip())
+                gold_sums.append(f.read().lstrip())
 
-        article.gold_summaries = gold_summaries
+        article.gold_summaries = [_tokenize_sentence_generic(s) for s in gold_sums]
 
     return articles
 
@@ -176,14 +312,14 @@ def _add_duc_summaries_2003(articles):
         id = article.id
         folder = article.folder
 
-        gold_summaries = []
+        gold_sums = []
         for filename in filenames:
             if (id not in filename) or (folder not in filename):
                 continue
             with open(filename, 'r') as f:
-                gold_summaries.append(f.read().lstrip().replace('\n',''))
+                gold_sums.append(f.read().lstrip().replace('\n',''))
 
-        article.gold_summaries = gold_summaries
+        article.gold_summaries = [_tokenize_sentence_generic(s) for s in gold_sums]
 
     return articles
 
@@ -211,6 +347,7 @@ def _tokenize_sentence_generic(sentence):
     remove quotations
     replace all numbers with ... something...
     """
-    sen = sentence.lower().split()
-    # print sen
-    return sentence
+    sen = sentence.lower()
+    sen = sen.replace(';', '').replace("'", '').replace('"', '')
+    sen = sen.replace('?', ' ?').replace('. ', ' . ').replace(', ', ' ')
+    return sen

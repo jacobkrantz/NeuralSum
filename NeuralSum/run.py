@@ -1,10 +1,14 @@
 
 from config import config
 from evaluation import test_article, test_all_articles
-from preprocessing import parse_duc_2004, parse_duc_2003, display_articles, load_word_embeddings, get_vocabulary
+from preprocessing import *
+from summary_model import SummaryModel
 
+from keras import backend as K
 import logging as log
+import numpy as np
 import sys
+from sklearn.model_selection import train_test_split
 
 def dev_test():
     # preprocessing tasks
@@ -27,31 +31,80 @@ def dev_test():
     # test_all([h,h1], [r,r1])
 
 def train():
-    log.info("Starting step: load testing data")
-
+    log.info("Starting step: load training data.")
     duc_2003_articles = parse_duc_2003()
     duc_2004_articles = parse_duc_2004()
-    log.debug("Starting step: load word embeddings.")
+    num_articles = len(duc_2003_articles) + len(duc_2004_articles)
+    log.info("Finished step: load training data. Articles: %s " % num_articles)
 
+    log.info("Starting step: load word embeddings.")
     embeddings = load_word_embeddings()
+    log.info("Finished step: load word embeddings. Size: %s" % len(embeddings))
 
-    vocab, vocab_size = get_vocabulary(duc_2003_articles + duc_2004_articles)
-    # log.debug("Finished step: loaded %s word embeddings." % len(embeddings))
-    log.info("Finished step: load testing data")
+    log.info("Starting step: extract vocabulary.")
+    vocab = get_vocabulary(duc_2003_articles + duc_2004_articles)
+    max_sen_len = get_max_sentence_len(duc_2003_articles)
+    max_sum_len = get_max_summary_len(duc_2003_articles + duc_2004_articles)
+    sentences, summaries = get_sen_sum_pairs(duc_2003_articles)
+    log.info("Finished step: extract vocabulary. Size: %s." %len(vocab))
 
-    # construct model
-    # train model with data
-    # save model & weights to files
+    log.info("Starting step: construct model.")
+    model = SummaryModel(m_params=fit_text(sentences, summaries))
+    model.compile(
+        embeddings,
+        vocab,
+        max_sen_len,
+        max_sum_len
+    )
+    log.info("Finished step: construct model.")
+
+    log.info("Starting step: fit model.")
+    Xtrain, Xtest, Ytrain, Ytest = train_test_split(sentences, summaries, test_size=0.2, random_state=39)
+    history = model.train(Xtrain, Xtest, Ytrain, Ytest)
+    # do some visualization of history
+    K.clear_session()
+    log.info("Finished step: fit model.")
 
 def test():
-    # load model
-    # load testing data
-    log.info("Starting step: load testing data")
+    log.info("Starting step: load testing data.")
+    duc_2003_articles = parse_duc_2003()
     duc_2004_articles = parse_duc_2004()
-    log.info("Finished step: load testing data")
-    # predict all summaries
-    # perform ROUGE tests
-    raise NotImplementedError('no model built yet')
+    num_articles = len(duc_2004_articles)
+    log.info("Finished step: load testing data. Articles: %s " % num_articles)
+
+    log.info("Starting step: load word embeddings.")
+    embeddings = load_word_embeddings()
+    log.info("Finished step: load word embeddings. Size: %s" % len(embeddings))
+
+    log.info("Starting step: extract vocabulary.")
+    vocab = get_vocabulary(duc_2003_articles + duc_2004_articles)
+    max_sen_len = get_max_sentence_len(duc_2003_articles)
+    max_sum_len = get_max_summary_len(duc_2003_articles + duc_2004_articles)
+    sentences, summaries = get_sen_sum_pairs(duc_2003_articles)
+    log.info("Finished step: extract vocabulary. Size: %s." %len(vocab))
+
+    log.info("Starting step: load model.")
+    m_params = np.load(
+        config['model_output_path'] + config['model_config_file']
+    ).item()
+    model = SummaryModel(m_params)
+    model.compile(
+        embeddings,
+        vocab,
+        max_sen_len,
+        max_sum_len
+    )
+    model.load_weights(
+        config['model_output_path'] + config['model_weight_file']
+    )
+    log.info("Finished step: load model.")
+
+    log.info("Starting step: generate summaries.")
+    duc_2004_articles = model.test(duc_2004_articles)
+    log.info("Finished step: generate summaries.")
+
+    log.info("Starting step: calulate ROUGE scores.")
+    log.info("Finished step: calulate ROUGE scores.")
 
 def main():
     if len(sys.argv) == 1:

@@ -14,5 +14,17 @@
 														"No."],
 	"duc4_eval_folder": "../data/duc2004/eval/",
 	"duc3_eval_folder": "../data/duc2003/abstracts/models/",
-	"glove_embeddings_file": "../data/glove_embeddings/glove.6B.50d.txt"
+	"glove_embeddings_file": "../data/glove_embeddings/glove.6B.50d.txt",
+	"glove_dim": 50,
+	"max_input_seq_length": 500,
+	"max_target_seq_length": 50,
+	"max_input_vocab_size": 10000,
+	"max_target_vocal_size": 2000,
+	"batch_size": 64,
+	"epochs": 10,
+	"model_output_path": "../data/out/models/",
+	"verbose": 1,
+	"model_config_file": "RNN-model-0-config.npy",
+	"model_architecture_file": "RNN-model-0-architecture.json",
+	"model_weight_file": "RNN-model-0-weights.h5"
 }
