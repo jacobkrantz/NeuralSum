@@ -100,7 +100,11 @@ def test():
     log.info("Finished step: load model.")
 
     log.info("Starting step: generate summaries.")
-    duc_2004_articles = model.test(duc_2004_articles)
+    duc_2004_articles = model.test(duc_2004_articles, num_to_test=-1)
+    for art in duc_2004_articles:
+        print art.sentence
+        print art.generated_summary
+        print ('')
     log.info("Finished step: generate summaries.")
 
     log.info("Starting step: calulate ROUGE scores.")

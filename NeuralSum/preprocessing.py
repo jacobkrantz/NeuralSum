@@ -198,19 +198,6 @@ def fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_len
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 def _get_duc_sentences_2004():
     """
     Create a DucArticle for each article in the docs folder of Duc2004.
@@ -347,7 +334,8 @@ def _tokenize_sentence_generic(sentence):
     remove quotations
     replace all numbers with ... something...
     """
-    sen = sentence.lower()
+    sen = sentence.lower().replace('\n', ' ')
     sen = sen.replace(';', '').replace("'", '').replace('"', '')
-    sen = sen.replace('?', ' ?').replace('. ', ' . ').replace(', ', ' ')
+    sen = sen.replace('?', ' ?').replace('. ', ' ').replace(', ', ' ')
+    # sen = sen[:-1] if sen[-1] == '.' else sen
     return sen

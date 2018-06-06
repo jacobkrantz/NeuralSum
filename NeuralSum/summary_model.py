@@ -102,10 +102,22 @@ class SummaryModel(AbstractModel):
         self.model.save_weights(weight_file_path)
         return history
 
-    def test(self, articles):
-        print articles[4].sentence
-        gen_sum = self.test_single(articles[4].sentence)
-        print gen_sum
+    def test(self, articles, num_to_test=-1):
+        if num_to_test == -1:
+            for art in articles:
+                art.generated_summary = self.test_single(art.sentence)
+            return articles
+
+        for i in range(num_to_test):
+            print('')
+            print 'Sentence:'
+            print articles[i].sentence
+            print 'Generated Summary:'
+            print self.test_single(articles[i].sentence)
+            print 'Gold Standard Summaries:'
+            for j, gold_sum in enumerate(articles[i].gold_summaries):
+                print(str(j) + ": " + gold_sum)
+            print('')
 
     def test_single(self, input_text):
         input_seq = []
@@ -158,7 +170,7 @@ class SummaryModel(AbstractModel):
 
         if(len(oov_words) > 0):
             oov_num = str(len(oov_words))
-            log.warn(oov_num + " words not represented in GloVe embeddings.")
+            log.warn(oov_num + " training words not represented in GloVe embeddings.")
 
         return embedding_matrix
 
