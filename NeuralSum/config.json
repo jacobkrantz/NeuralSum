@@ -15,7 +15,6 @@
 	"duc4_eval_folder": "../data/duc2004/eval/",
 	"duc3_eval_folder": "../data/duc2003/abstracts/models/",
 	"glove_embeddings_file": "../data/glove_embeddings/glove.6B.50d.txt",
-	"glove_dim": 50,
 	"max_input_seq_length": 500,
 	"max_target_seq_length": 50,
 	"max_input_vocab_size": 10000,

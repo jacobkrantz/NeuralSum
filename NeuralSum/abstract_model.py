@@ -8,6 +8,10 @@ class AbstractModel(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
+    def compile():
+        pass
+
+    @abstractmethod
     def train(self):
         pass
 

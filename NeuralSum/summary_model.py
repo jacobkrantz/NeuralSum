@@ -36,6 +36,7 @@ class SummaryModel(AbstractModel):
         self.target_word2idx = m_params['target_word2idx']
         self.target_idx2word = m_params['target_idx2word']
         self.m_params = m_params
+        self.glove_dim = 50 if '50d' in config['glove_embeddings_file'] else 100
         self.model = None
 
     def compile(self, embeddings, vocab, max_sen_len, max_sum_len):
@@ -46,11 +47,11 @@ class SummaryModel(AbstractModel):
         inputs1 = Input(shape=(self.max_input_seq_length,))
         am1 = Embedding(
             len(vocab),
-            config['glove_dim'],
+            self.glove_dim,
             weights=[embedding_matrix],
             input_length=max_sen_len,
             trainable=False)(inputs1)
-        am2 = LSTM(config['glove_dim'])(am1)
+        am2 = LSTM(self.glove_dim)(am1)
 
         inputs2 = Input(shape=(self.max_target_seq_length,))
         sm1 = Embedding(
@@ -59,7 +60,7 @@ class SummaryModel(AbstractModel):
             weights=[embedding_matrix],
             input_length=max_sen_len,
             trainable=False)(inputs2)
-        sm2 = LSTM(config['glove_dim'])(sm1)
+        sm2 = LSTM(self.glove_dim)(sm1)
 
         decoder1 = Concatenate()([am2, sm2])
         outputs = Dense(self.num_target_tokens, activation='softmax')(decoder1)
@@ -160,7 +161,7 @@ class SummaryModel(AbstractModel):
     def _make_embedding_matrix(self, embeddings, vocab):
         # Create a weight matrix for words in the vocab
         oov_words = set()
-        embedding_matrix = np.zeros((len(vocab), config["glove_dim"]))
+        embedding_matrix = np.zeros((len(vocab), self.glove_dim))
         for i, word in enumerate(vocab):
             embedding_vector = embeddings.get(word)
             if embedding_vector is not None:

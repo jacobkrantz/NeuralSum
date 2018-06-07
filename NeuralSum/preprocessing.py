@@ -21,6 +21,7 @@ Methods:
     - get_max_summary_len(articles)
     - get_sen_sum_pairs(articles)
     - fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_length=None)
+    - display_articles(articles)
 """
 
 def parse_duc_2004():
@@ -193,6 +194,14 @@ def fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_len
         'max_input_seq_length': max_input_seq_length,
         'max_target_seq_length': max_target_seq_length
     }
+
+def display_articles(articles):
+    for art in articles:
+        print("Sentence: " + art.sentence)
+        print("Generated Summary: " + art.generated_summary)
+        print("Gold Standard Summaries:")
+        for i, gss in enumerate(art.gold_summaries):
+            print(str(i) + ": " + gss)
 
 
 

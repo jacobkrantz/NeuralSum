@@ -16,7 +16,6 @@ def test_all_articles(articles, type='recall'):
     """
     type can be 'recall', 'precision', or 'f-measure'
     """
-    print [article.generated_summary for article in articles]
     hyps = []
     refs = []
     for article in articles:
@@ -46,7 +45,8 @@ def test_single(hypothesis, reference, type='recall'):
     scores = {
         'rouge-1':"{0:.2f}".format(scores['rouge-1'][type[0]] * 100),
         'rouge-2':"{0:.2f}".format(scores['rouge-2'][type[0]] * 100),
-        'rouge-l':"{0:.2f}".format(scores['rouge-l'][type[0]] * 100)
+        'rouge-l':"{0:.2f}".format(scores['rouge-l'][type[0]] * 100),
+        'test_type': type
     }
     if config['rouge']['output_report']:
         output_rouge_report(scores, type, 1)
@@ -62,7 +62,8 @@ def test_all(hyps, refs, type='recall'):
     scores = {
         'rouge-1':"{0:.2f}".format(scores['rouge-1'][type[0]] * 100),
         'rouge-2':"{0:.2f}".format(scores['rouge-2'][type[0]] * 100),
-        'rouge-l':"{0:.2f}".format(scores['rouge-l'][type[0]] * 100)
+        'rouge-l':"{0:.2f}".format(scores['rouge-l'][type[0]] * 100),
+        'test_type': type
     }
     if config['rouge']['output_report']:
         output_rouge_report(scores, type, len(set(hyps)))
@@ -85,3 +86,14 @@ def output_rouge_report(results, test_type, num_tested):
     with open(filename, 'w') as f:
         results["num_tested"] = num_tested
         json.dump(results, f, indent=2, sort_keys=True)
+
+def display_scores(scores):
+    """
+    Displays the ROUGE scores to the console.
+    """
+    print('----------------------')
+    print('  ROUGE Score Report  ')
+    print('----------------------')
+    for k,v in scores.iteritems():
+        print(str(k) + ": \t" + str(v))
+    print('')
