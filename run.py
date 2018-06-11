@@ -20,10 +20,6 @@ def dev_test():
     duc_2004_articles = ns.parse_duc_2004()
     duc_2003_articles = ns.parse_duc_2003()
     vocab =  ns.get_vocabulary(duc_2003_articles + duc_2004_articles)
-    
-    infersent = InferSent(vocab)
-    print infersent.get_vectors(['this is a sample sentence to test.'])
-    # infersent.visualize('this is a sample sentence to test.')
 
     # display_articles(duc_2003_articles, 3, random=False)
     duc_2004_articles[0].generated_summary = "supporters of Malaysia's opposition leader speak out"
