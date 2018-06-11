@@ -1,5 +1,6 @@
 import unittest
 
+
 class TestNeuralSum(unittest.TestCase):
 
     def setUp(self):
@@ -9,5 +10,7 @@ class TestNeuralSum(unittest.TestCase):
         pass
 
     def test_whatever(self):
-        # TODO
+        pass
+
+    def test_whatever2(self):
         pass

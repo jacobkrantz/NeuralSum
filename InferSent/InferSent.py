@@ -1,7 +1,10 @@
 
 from config import config
 
+from itertools import starmap
 import nltk
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 import torch
 
 class InferSent(object):
@@ -19,7 +22,7 @@ class InferSent(object):
         self.infersent.set_glove_path(config['infersent']['glove_file'])
         self.infersent.build_vocab(vocab, tokenize=True)
 
-    def get_vectors(self, sentences):
+    def get_embeddings(self, sentences):
         """
         Args:
             sentences (list<string>) list of sentences
@@ -31,3 +34,25 @@ class InferSent(object):
 
     def visualize(self, sentence):
         self.infersent.visualize(sentence, tokenize=True)
+
+    def get_avg_similarity(self, sentences, summaries):
+        assert(len(sentences) == len(summaries))
+
+        embeddings_1 = self.get_embeddings(sentences)
+        embeddings_2 = self.get_embeddings(summaries)
+
+        return np.mean(list(starmap(
+            lambda e1,e2: self.cosine_similarity(e1,e2),
+            zip(embeddings_1, embeddings_2)
+        )))
+
+
+    def cosine_similarity(self, sentence_1, sentence_2):
+        """
+        Only call with one sentence at a time.
+        """
+
+        return cosine_similarity(
+            sentence_1.reshape(1,-1),
+            sentence_2.reshape(1,-1)
+        )

@@ -49,7 +49,7 @@ def test_single(hypothesis, reference, type='recall'):
         'test_type': type
     }
     if config['rouge']['output_report']:
-        output_rouge_report(scores, type, 1)
+        output_eval_report(scores, type, 1)
     return scores
 
 def test_all(hyps, refs, type='recall'):
@@ -66,10 +66,10 @@ def test_all(hyps, refs, type='recall'):
         'test_type': type
     }
     if config['rouge']['output_report']:
-        output_rouge_report(scores, type, len(set(hyps)))
+        output_eval_report(scores, type, len(set(hyps)))
     return scores
 
-def output_rouge_report(results, test_type, num_tested):
+def output_eval_report(results, test_type, num_tested):
     """
     Outputs the given results dictionary to a json file in
         the rouge reports folder
