@@ -197,11 +197,12 @@ def fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_len
 
 def display_articles(articles):
     for art in articles:
-        print("Sentence: " + art.sentence)
-        print("Generated Summary: " + art.generated_summary)
-        print("Gold Standard Summaries:")
+        print('Sentence:\n' + art.sentence)
+        print('Generated Summary:\n' + art.generated_summary)
+        print('Gold Standard Summaries:')
         for i, gss in enumerate(art.gold_summaries):
-            print(str(i) + ": " + gss)
+            print(str(i) + ': ' + gss)
+        print('')
 
 
 
@@ -344,7 +345,8 @@ def _tokenize_sentence_generic(sentence):
     replace all numbers with ... something...
     """
     sen = sentence.lower().replace('\n', ' ')
-    sen = sen.replace(';', '').replace("'", '').replace('"', '')
+    sen = sen.replace(';', '').replace("'", '').replace('"', '').replace('_', ' ')
     sen = sen.replace('?', ' ?').replace('. ', ' ').replace(', ', ' ')
-    # sen = sen[:-1] if sen[-1] == '.' else sen
+    sen = sen[:-1] if sen[-1] == '.' else sen
+    sen = " ".join(sen.split()) # remove duplicate whitespace
     return sen

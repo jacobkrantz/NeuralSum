@@ -1,8 +1,8 @@
 
 from config import config
-from evaluation import test_article, test_all_articles, display_scores
-from preprocessing import *
-from summary_model import SummaryModel
+import NeuralSum as ns
+from InferSent import InferSent
+
 
 from keras import backend as K
 import logging as log
@@ -17,34 +17,40 @@ __version__ = '0.0.1'
 
 def dev_test():
     log.info("Running Developer Script")
-    duc_2004_articles = parse_duc_2004()
-    duc_2003_articles = parse_duc_2003()
+    duc_2004_articles = ns.parse_duc_2004()
+    duc_2003_articles = ns.parse_duc_2003()
+    vocab =  ns.get_vocabulary(duc_2003_articles + duc_2004_articles)
+    
+    infersent = InferSent(vocab)
+    print infersent.get_vectors(['this is a sample sentence to test.'])
+    # infersent.visualize('this is a sample sentence to test.')
+
     # display_articles(duc_2003_articles, 3, random=False)
     duc_2004_articles[0].generated_summary = "supporters of Malaysia's opposition leader speak out"
     duc_2004_articles[1].generated_summary = "Habibie struggles to attend Asia-Pacific summit"
-    scores = test_all_articles([duc_2004_articles[0], duc_2004_articles[1]])
-    display_scores(scores)
+    scores = ns.test_all_articles([duc_2004_articles[0], duc_2004_articles[1]])
+    ns.display_scores(scores)
 
 def train():
     log.info("Starting step: load training data.")
-    duc_2003_articles = parse_duc_2003()
-    duc_2004_articles = parse_duc_2004()
+    duc_2003_articles = ns.parse_duc_2003()
+    duc_2004_articles = ns.parse_duc_2004()
     num_articles = len(duc_2003_articles) + len(duc_2004_articles)
     log.info("Finished step: load training data. Articles: %s " % num_articles)
 
     log.info("Starting step: load word embeddings.")
-    embeddings = load_word_embeddings()
+    embeddings = ns.load_word_embeddings()
     log.info("Finished step: load word embeddings. Size: %s" % len(embeddings))
 
     log.info("Starting step: extract vocabulary.")
-    vocab = get_vocabulary(duc_2003_articles + duc_2004_articles)
-    max_sen_len = get_max_sentence_len(duc_2003_articles)
-    max_sum_len = get_max_summary_len(duc_2003_articles + duc_2004_articles)
-    sentences, summaries = get_sen_sum_pairs(duc_2003_articles)
+    vocab = ns.get_vocabulary(duc_2003_articles + duc_2004_articles)
+    max_sen_len = ns.get_max_sentence_len(duc_2003_articles)
+    max_sum_len = ns.get_max_summary_len(duc_2003_articles + duc_2004_articles)
+    sentences, summaries = ns.get_sen_sum_pairs(duc_2003_articles)
     log.info("Finished step: extract vocabulary. Size: %s." %len(vocab))
 
     log.info("Starting step: construct model.")
-    model = SummaryModel(m_params=fit_text(sentences, summaries))
+    model = ns.SummaryModel(m_params=ns.fit_text(sentences, summaries))
     model.compile(
         embeddings,
         vocab,
@@ -62,27 +68,27 @@ def train():
 
 def test(verbosity):
     log.info("Starting step: load testing data.")
-    duc_2003_articles = parse_duc_2003()
-    duc_2004_articles = parse_duc_2004()
+    duc_2003_articles = ns.parse_duc_2003()
+    duc_2004_articles = ns.parse_duc_2004()
     num_articles = len(duc_2004_articles)
     log.info("Finished step: load testing data. Articles: %s " % num_articles)
 
     log.info("Starting step: load word embeddings.")
-    embeddings = load_word_embeddings()
+    embeddings = ns.load_word_embeddings()
     log.info("Finished step: load word embeddings. Size: %s" % len(embeddings))
 
     log.info("Starting step: extract vocabulary.")
-    vocab = get_vocabulary(duc_2003_articles + duc_2004_articles)
-    max_sen_len = get_max_sentence_len(duc_2003_articles)
-    max_sum_len = get_max_summary_len(duc_2003_articles + duc_2004_articles)
-    sentences, summaries = get_sen_sum_pairs(duc_2003_articles)
+    vocab = ns.get_vocabulary(duc_2003_articles + duc_2004_articles)
+    max_sen_len = ns.get_max_sentence_len(duc_2003_articles)
+    max_sum_len = ns.get_max_summary_len(duc_2003_articles + duc_2004_articles)
+    sentences, summaries = ns.get_sen_sum_pairs(duc_2003_articles)
     log.info("Finished step: extract vocabulary. Size: %s." %len(vocab))
 
     log.info("Starting step: load model.")
     m_params = np.load(
         config['model_output_path'] + config['model_config_file']
     ).item()
-    model = SummaryModel(m_params)
+    model = ns.SummaryModel(m_params)
     model.compile(
         embeddings,
         vocab,
@@ -98,13 +104,13 @@ def test(verbosity):
     num_to_test = -1
     duc_2004_articles = model.test(duc_2004_articles, num_to_test=num_to_test)
     if num_to_test > 0:
-        display_articles(duc_2004_articles)
+        ns.display_articles(duc_2004_articles)
     log.info("Finished step: generate summaries.")
 
     log.info("Starting step: calulate ROUGE scores.")
-    scores = test_all_articles(duc_2004_articles)
+    scores = ns.test_all_articles(duc_2004_articles)
     if verbosity == 1:
-        display_scores(scores)
+        ns.display_scores(scores)
     log.info("Finished step: calulate ROUGE scores.")
 
 def main():

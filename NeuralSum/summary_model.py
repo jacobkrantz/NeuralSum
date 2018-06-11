@@ -1,6 +1,8 @@
 
 from abstract_model import AbstractModel
+from architectures import compile_model_0, compile_model_1
 from config import config
+from preprocessing import display_articles
 
 # silence the future warning from h5py
 import warnings
@@ -21,6 +23,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.models import Model
 from keras.layers import Embedding, Dense, Input, Concatenate, add
 from keras.layers.recurrent import LSTM
+from keras.utils import print_summary
 from keras import backend as K
 K.set_image_dim_ordering('tf')
 
@@ -40,33 +43,26 @@ class SummaryModel(AbstractModel):
         self.model = None
 
     def compile(self, embeddings, vocab, max_sen_len, max_sum_len):
+        """
+        Defines the model to be compiled. If verbose is set to 1, prints
+            a summary of the model to the console.
+        Potential architectures are located in the architectures.py file.
+            Simply replace 'compile_model_n' with what ever model number
+            you want to use.
+        Should be called before both test() or train().
+        """
         embedding_matrix = self._make_embedding_matrix(
             embeddings,
             vocab
         )
-        inputs1 = Input(shape=(self.max_input_seq_length,))
-        am1 = Embedding(
+        self.model = compile_model_1(
+            self,
+            embedding_matrix,
             len(vocab),
-            self.glove_dim,
-            weights=[embedding_matrix],
-            input_length=max_sen_len,
-            trainable=False)(inputs1)
-        am2 = LSTM(self.glove_dim)(am1)
-
-        inputs2 = Input(shape=(self.max_target_seq_length,))
-        sm1 = Embedding(
-            len(vocab),
-            config['glove_dim'],
-            weights=[embedding_matrix],
-            input_length=max_sen_len,
-            trainable=False)(inputs2)
-        sm2 = LSTM(self.glove_dim)(sm1)
-
-        decoder1 = Concatenate()([am2, sm2])
-        outputs = Dense(self.num_target_tokens, activation='softmax')(decoder1)
-
-        self.model = Model(inputs=[inputs1, inputs2], outputs=outputs)
-        self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+            max_sen_len
+        )
+        if config['verbose'] == 1:
+            print_summary(self.model)
 
     def train(self, Xtrain, Xtest, Ytrain, Ytest):
         config_filename = config['model_output_path'] + config['model_config_file']
@@ -104,21 +100,26 @@ class SummaryModel(AbstractModel):
         return history
 
     def test(self, articles, num_to_test=-1):
+        """
+        Generates and adds a summary for each article.
+        Args:
+            articles list<DucArticle>
+            num_to_test (int): if -1, test all. Otherwise, test that number and
+                display them to the console.
+        Returns:
+            list<DucArticle> contains all articles that summaries were added to.
+        """
         if num_to_test == -1:
             for art in articles:
                 art.generated_summary = self.test_single(art.sentence)
             return articles
 
+        # test select number and display them to console
         for i in range(num_to_test):
-            print('')
-            print 'Sentence:'
-            print articles[i].sentence
-            print 'Generated Summary:'
-            print self.test_single(articles[i].sentence)
-            print 'Gold Standard Summaries:'
-            for j, gold_sum in enumerate(articles[i].gold_summaries):
-                print(str(j) + ": " + gold_sum)
-            print('')
+            articles[i].generated_summary = self.test_single(articles[i].sentence)
+
+        display_articles(articles[:num_to_test])
+        return articles[:num_to_test]
 
     def test_single(self, input_text):
         input_seq = []
