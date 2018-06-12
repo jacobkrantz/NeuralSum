@@ -30,5 +30,10 @@
 		"glove_file": "./data/glove_embeddings/glove.840B.300d.txt",
 		"trained_model": "./data/infersent_specific/infersent.allnli.pickle",
 		"vocab_size": 1000000
+	},
+	"wmd": {
+		"word2vec": "data/word2vec_embeddings/GoogleNews-vectors-negative300.bin.gz",
+		"save_memory": false,
+		"normalize": false
 	}
 }

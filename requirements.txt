@@ -6,3 +6,6 @@ numpy
 rouge==0.3.0
 tensorflow==1.8.0
 torch
+pyemd-0.5.1
+gensim
+pattern

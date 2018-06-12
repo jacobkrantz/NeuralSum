@@ -5,6 +5,7 @@ import datetime
 import json
 from rouge import Rouge # https://github.com/pltrdy/rouge
 from InferSent import InferSent
+from word_mover_distance import WordMoverDistance
 
 """
 Performs all ROUGE tests and InferSent comparisons.
@@ -13,11 +14,12 @@ Filename: 'evaluation.py'
 """
 class Evaluation(object):
     """
-    Needs to be a class so that the InferSent data
+    Needs to be a class so that the InferSent data and WMD data
         is only loaded once. (time expensive)
     """
     def __init__(self):
         self.infersent = InferSent()
+        self.wmd = WordMoverDistance()
         self.rouge = Rouge()
 
     def test_all_articles(self, articles, type='recall'):
@@ -55,6 +57,7 @@ class Evaluation(object):
             'rouge-2':"{0:.2f}".format(scores['rouge-2'][type[0]] * 100),
             'rouge-l':"{0:.2f}".format(scores['rouge-l'][type[0]] * 100),
             'cos_sim':str(self.infersent.get_avg_similarity([hypothesis], [reference])),
+            'word_mover_distance':self.wmd.get_wmd(hypothesis, reference),
             'test_type': type
         }
         if config['rouge']['output_report']:
@@ -72,6 +75,7 @@ class Evaluation(object):
             'rouge-2':"{0:.2f}".format(scores['rouge-2'][type[0]] * 100),
             'rouge-l':"{0:.2f}".format(scores['rouge-l'][type[0]] * 100),
             'cos_sim':str(self.infersent.get_avg_similarity(hyps, refs)),
+            'word_mover_distance':self.wmd.get_avg_wmd(hyps, refs),
             'test_type': type
         }
         if config['rouge']['output_report']:
