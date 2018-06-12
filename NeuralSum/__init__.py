@@ -6,6 +6,7 @@ try:
 except:
     __version__ = '0.0.1'
 
-from evaluation import test_article, test_all_articles, display_scores
+from evaluation import Evaluation
 from preprocessing import *
 from summary_model import SummaryModel
+from eval_example_script import evaluate_examples

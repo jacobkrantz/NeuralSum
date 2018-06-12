@@ -7,9 +7,7 @@ import unittest
 class TestInferSent(unittest.TestCase):
 
     def setUp(self):
-        self.infersent = InferSent(
-            ns.get_vocabulary(ns.parse_duc_2004() + ns.parse_duc_2003())
-        )
+        self.infersent = InferSent(vocab_size=50000)
         self.sentences = [
             'Peter would like his dog to jump over the fence.',
             'Peter does not like his dog jumping over the fence.',

@@ -2,17 +2,22 @@
 from config import config
 
 from itertools import starmap
-import nltk
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import torch
 
 class InferSent(object):
     """Interacts with the pretrained Infersent module from Facebook."""
-    def __init__(self, vocab):
+    def __init__(self, vocab_size=None):
         """
+        IMPORTANT: keep the vocab very large: the more words in the vocab, the
+            more differentiation between sentences. This gives better semantic
+            similarities. Downside is the larger the vocab, the longer the init
+            process takes.
+            Config can specify vocab size up to 2.2 million.
         Args:
-            vocab (list<string>) list of sentences to be included in the vocab.
+            vocab_size (int): size of vocab to load into the word vector space
+                for determining sentence vector similarity. Optional.
         """
         self.infersent = infersent = torch.load(
             config['infersent']['trained_model'],
@@ -20,7 +25,9 @@ class InferSent(object):
             loc: storage
         )
         self.infersent.set_glove_path(config['infersent']['glove_file'])
-        self.infersent.build_vocab(vocab, tokenize=True)
+        if vocab_size is None:
+            vocab_size = config['infersent']['vocab_size']
+        self.infersent.build_vocab_k_words(vocab_size)
 
     def get_embeddings(self, sentences):
         """
@@ -37,7 +44,6 @@ class InferSent(object):
 
     def get_avg_similarity(self, sentences, summaries):
         assert(len(sentences) == len(summaries))
-
         embeddings_1 = self.get_embeddings(sentences)
         embeddings_2 = self.get_embeddings(summaries)
 
@@ -51,7 +57,6 @@ class InferSent(object):
         """
         Only call with one sentence at a time.
         """
-
         return cosine_similarity(
             sentence_1.reshape(1,-1),
             sentence_2.reshape(1,-1)

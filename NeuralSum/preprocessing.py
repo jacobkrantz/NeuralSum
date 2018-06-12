@@ -42,13 +42,13 @@ def parse_duc_2003():
     """
     return _add_duc_summaries_2003(_get_duc_sentences_2003())
 
-def display_articles(articles, number_to_display, random=False):
-    if random:
-        shuffle(articles)
-    print "Contains", len(articles), "articles."
-    for i in range(number_to_display):
-        print articles[i]
-        print ""
+# def display_articles(articles, number_to_display, random=False):
+#     if random:
+#         shuffle(articles)
+#     print "Contains", len(articles), "articles."
+#     for i in range(number_to_display):
+#         print articles[i]
+#         print ""
 
 def load_word_embeddings():
     """
@@ -197,13 +197,8 @@ def fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_len
 
 def display_articles(articles):
     for art in articles:
-        print('Sentence:\n' + art.sentence)
-        print('Generated Summary:\n' + art.generated_summary)
-        print('Gold Standard Summaries:')
-        for i, gss in enumerate(art.gold_summaries):
-            print(str(i) + ': ' + gss)
+        print str(art)
         print('')
-
 
 
 

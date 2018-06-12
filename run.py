@@ -3,7 +3,6 @@ from config import config
 import NeuralSum as ns
 from InferSent import InferSent
 
-
 from keras import backend as K
 import logging as log
 import numpy as np
@@ -16,16 +15,9 @@ __license__ = 'none'
 __version__ = '0.0.1'
 
 def dev_test():
-    log.info("Running Developer Script")
-    duc_2004_articles = ns.parse_duc_2004()
-    duc_2003_articles = ns.parse_duc_2003()
-    vocab =  ns.get_vocabulary(duc_2003_articles + duc_2004_articles)
-
-    # display_articles(duc_2003_articles, 3, random=False)
-    duc_2004_articles[0].generated_summary = "supporters of Malaysia's opposition leader speak out"
-    duc_2004_articles[1].generated_summary = "Habibie struggles to attend Asia-Pacific summit"
-    scores = ns.test_all_articles([duc_2004_articles[0], duc_2004_articles[1]])
-    ns.display_scores(scores)
+    log.info("Running developer script")
+    ns.evaluate_examples()
+    log.info("Done running developer script")
 
 def train():
     log.info("Starting step: load training data.")
@@ -103,11 +95,12 @@ def test(verbosity):
         ns.display_articles(duc_2004_articles)
     log.info("Finished step: generate summaries.")
 
-    log.info("Starting step: calulate ROUGE scores.")
-    scores = ns.test_all_articles(duc_2004_articles)
+    log.info("Starting step: calulate ROUGE and InferSent scores.")
+    eval = ns.Evaluation()
+    scores = eval.test_all_articles(duc_2004_articles)
     if verbosity == 1:
         ns.display_scores(scores)
-    log.info("Finished step: calulate ROUGE scores.")
+    log.info("Finished step: calulate ROUGE and InferSent scores.")
 
 def main():
     if len(sys.argv) == 1:

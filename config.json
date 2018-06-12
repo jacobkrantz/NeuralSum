@@ -28,6 +28,7 @@
 	"model_weight_file": "RNN-model-1-weights.h5",
 	"infersent": {
 		"glove_file": "./data/glove_embeddings/glove.840B.300d.txt",
-		"trained_model": "./data/infersent_specific/infersent.allnli.pickle"
+		"trained_model": "./data/infersent_specific/infersent.allnli.pickle",
+		"vocab_size": 1000000
 	}
 }
