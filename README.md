@@ -1,5 +1,5 @@
 # NeuralSumm
-Sentence Summarization with Attentive Neural Techniques
+Abstractive Sentence Summarization with Attentive Neural Techniques
 
 
 ## todo  
@@ -64,3 +64,15 @@ Evaluation Scores:
 
 #### Conclusion  
 Notice that the ROUGE scores of examples 1 & 2 stayed the exact same, not differentiating between a clearly better summary and a clearly worse summary. On the other hand, the cosine similarity was able to identify the difference the bad summary showed, punishing the similarity score by 7.6%. The acceptable summary in Example 1 was only punished 2.1%. When looking at the Word Mover Distance (WMD), we see that the bad summary was given a 24% larger distance from the target than the acceptable summary (0.512 vs 0.418). Thus WMD also shows the ability to judge semantically. Cos-Sim and WMD metrics are different from each other: Cos-Sim is a neural approach using sentence vectors while WMD is an aggregated distance measurement between a sentence's word vectors. Further distinguishing them is the source of word vectors: GloVe for Cos-Sim, and Word2Vec for WMD. Finally, Cos-Sim is a value to be maximized whereas WMD is a value to be minimized. Because of these differences, both metrics provide value in analyzing abstractive summaries.  
+
+## Acknowledgements  
+
+This code is being developed for research purposes at the University of Colorado at Colorado Springs. This is an REU project sponsored by the NSF.  
+Advisor: Dr. Jugal Kalita  
+
+Facebook Research's [InferSent](https://github.com/facebookresearch/InferSent) codebase.  
+Full implementation of ROGUE metric [here](https://github.com/pltrdy/rouge).  
+Word Mover Distance implementation by [GenSim](https://radimrehurek.com/gensim/models/keyedvectors.html).  
+[GloVe](https://nlp.stanford.edu/projects/glove/) embeddings by Stanford NLP group.  
+[Word2Vec](https://code.google.com/archive/p/word2vec/) embeddings from Google.  
+DUC2003 and [DUC2004](https://duc.nist.gov/duc2004/) conference data by NIST.  
