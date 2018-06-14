@@ -343,5 +343,9 @@ def _tokenize_sentence_generic(sentence):
     sen = sen.replace(';', '').replace("'", '').replace('"', '').replace('_', ' ')
     sen = sen.replace('?', ' ?').replace('. ', ' ').replace(', ', ' ')
     sen = sen[:-1] if sen[-1] == '.' else sen
-    sen = " ".join(sen.split()) # remove duplicate whitespace
+
+    sen = sen.split()
+    for word in sen:# remove : at end of some words
+        word = word[:-1] if word[-1] == ':' else word
+    sen = " ".join(sen) # remove duplicate whitespace
     return sen
