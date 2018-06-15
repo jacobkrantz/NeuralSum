@@ -53,32 +53,41 @@ class Evaluation(object):
 
         scores = self.rouge.get_scores(hypothesis, reference)[0]
         scores = {
-            'rouge-1':"{0:.2f}".format(scores['rouge-1'][type[0]] * 100),
-            'rouge-2':"{0:.2f}".format(scores['rouge-2'][type[0]] * 100),
-            'rouge-l':"{0:.2f}".format(scores['rouge-l'][type[0]] * 100),
-            'cos_sim':str(self.infersent.get_avg_similarity([hypothesis], [reference])),
-            'word_mover_distance':self.wmd.get_wmd(hypothesis, reference),
+            'rouge-1':"{0:.3f}".format(scores['rouge-1'][type[0]] * 100),
+            'rouge-2':"{0:.3f}".format(scores['rouge-2'][type[0]] * 100),
+            'rouge-l':"{0:.3f}".format(scores['rouge-l'][type[0]] * 100),
+            'cos_sim':"{0:.4f}".format(self.infersent.get_avg_similarity([hypothesis], [reference])),
+            'wm_dist':"{0:.3f}".format(self.wmd.get_wmd(hypothesis, reference)),
             'test_type': type
         }
         if config['rouge']['output_report']:
             self.output_eval_report(scores, type, 1)
         return scores
 
-    def test_all(self, hyps, refs, type='recall'):
+    def test_all(self, hyps, refs, type='recall', save_results=None):
         """
+        Args:
+            save_results (bool): if None, defaults to config value.
         type can be 'recall', 'precision', or 'f-measure'
         """
         assert(type in ['recall','precision','f-measure'])
         scores = self.rouge.get_scores(hyps, refs, avg=True)
+        print('ROUGE scores calculated.')
+        cos_sim = self.infersent.get_avg_similarity(hyps, refs)
+        print('InferSent scores calculated.')
+        wmd = self.wmd.get_avg_wmd(hyps, refs)
+        print('Word Mover\'s Distance calculated.')
         scores = {
-            'rouge-1':"{0:.2f}".format(scores['rouge-1'][type[0]] * 100),
-            'rouge-2':"{0:.2f}".format(scores['rouge-2'][type[0]] * 100),
-            'rouge-l':"{0:.2f}".format(scores['rouge-l'][type[0]] * 100),
-            'cos_sim':str(self.infersent.get_avg_similarity(hyps, refs)),
-            'word_mover_distance':self.wmd.get_avg_wmd(hyps, refs),
+            'rouge-1':"{0:.3f}".format(scores['rouge-1'][type[0]] * 100),
+            'rouge-2':"{0:.3f}".format(scores['rouge-2'][type[0]] * 100),
+            'rouge-l':"{0:.3f}".format(scores['rouge-l'][type[0]] * 100),
+            'cos_sim':"{0:.4f}".format(cos_sim),
+            'wm_dist':"{0:.3f}".format(wmd),
             'test_type': type
         }
-        if config['rouge']['output_report']:
+        if save_results == None:
+            save_results = config['rouge']['output_report']
+        if save_results:
             self.output_eval_report(scores, type, len(set(hyps)))
         return scores
 
@@ -100,7 +109,8 @@ class Evaluation(object):
             results["num_tested"] = num_tested
             json.dump(results, f, indent=2, sort_keys=True)
 
-    def display_scores(self, scores):
+    @classmethod
+    def display_scores(cls, scores):
         """
         Displays the ROUGE scores to the console.
         """

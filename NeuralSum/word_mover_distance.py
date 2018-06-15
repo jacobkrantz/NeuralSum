@@ -15,7 +15,7 @@ class WordMoverDistance(object):
     A measure of dissimilarity.
     Vectors sourced from pretrained Word2Vec.
     Note that the values for WMD differ from those in the original paper.
-    
+
     Sources:
         https://radimrehurek.com/gensim/models/keyedvectors.html
         GenSim: free, statistical semantics python package
@@ -57,9 +57,9 @@ class WordMoverDistance(object):
 
         self.stopwords = stopwords.words('english')
 
-    def get_avg_wmd(sentences_1, sentences_2):
+    def get_avg_wmd(self, sentences_1, sentences_2):
         return np.mean(list(starmap(
-            lambda s,s2: self.get_wmd(s1,s2),
+            lambda s1,s2: self.get_wmd(s1,s2),
             zip(sentences_1, sentences_2)
         )))
 

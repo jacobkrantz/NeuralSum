@@ -127,7 +127,6 @@ def main():
         raise SyntaxError("Bad argument(s). flags: '-v' or '-s' args: 'train' or 'test'")
 
 if __name__ == '__main__':
-    log.getLogger('')
     if len(config) > 0:
         log.info("Configuration loaded.")
         main()

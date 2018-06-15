@@ -1,10 +1,26 @@
 # NeuralSumm
-Abstractive Sentence Summarization with Attentive Neural Techniques
+Abstractive Sentence Summarization with Attentive Neural Techniques. Presents a new way to evaluate auto-generated abstractive summaries.  
 
+## Using Tensor2Tensor  
+There are 5 scripts for using Tensor2Tensor models, 3 shell and 2 python. These scripts can be modified to utilize different models, data, and other parameters. For model-specific parameters, edit `/NeuralSum/NeuralSum/my_custom_hparams.py`. For using the crappy model that does not utilize Tensor2Tensor, start everything with `run.py`. This also allows you to play with Keras models quite rapidly. To do so, make model adjustments in `/NeuralSum/NeuralSum/summary_model.py`.  
 
-## todo  
-extract first sentence of DUC2004 articles and store then in the /clean folder.  
-Flatten /docs to just have all the files, no folders.  
+##### Scripts:  
+`datagen.sh`: generate the data to be trained and tested with.  
+`t2t-trainer.sh`: trains a model using the given parameters.  
+`decode.sh`: Run inputs through the model. Can either be done iteractively or from files.  
+`process_duc4.py`: extract sentences and summaries for the raw folders of DUC2004 so that they can easily be evaluated against in:  
+`evaluate_on_duc.py`: evaluate the various scores of generated summaries against target summaries.  
+
+## Datasets  
+All datasets are stored in a specific way in the ./data folder. You can ask the maintainers for access to this data.  
+- DUC2003  
+- DUC2004  
+- English Gigaword  
+- GloVe embeddings  
+- Word2Vec embeddings  
+
+## Todo  
+Begin Gigaword data gathering and processing. Make Gigaword data work with Tensor2Tensor model training. Ignore evaluation. Include basic data info in ROUGE reports: which data was trained on, which was tested with, how many words for training/testing, etc.  
 
 ## Unit Tests  
 To run all unit tests, execute:  

@@ -45,13 +45,14 @@ class InferSent(object):
     def get_avg_similarity(self, sentences, summaries):
         assert(len(sentences) == len(summaries))
         embeddings_1 = self.get_embeddings(sentences)
+        print('InferSent: Embeddings generated for group 1.')
         embeddings_2 = self.get_embeddings(summaries)
+        print('InferSent: Embeddings generated for group 2.')
 
         return np.mean(list(starmap(
             lambda e1,e2: self.cosine_similarity(e1,e2),
             zip(embeddings_1, embeddings_2)
         )))
-
 
     def cosine_similarity(self, sentence_1, sentence_2):
         """
