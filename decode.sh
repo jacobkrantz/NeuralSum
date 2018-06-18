@@ -29,4 +29,7 @@ t2t-decoder \
   --t2t_usr_dir=$USR_DIR \
   --decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA","force_decode_length"=True,"extra_length"=10 \
   --decode_from_file=$DECODE_FILE \
-  --decode_to_file=$DECODE_FILE_OUT
+  --decode_to_file=$DECODE_FILE_OUT \
+  --stop_at_eos=True \
+  --decode_interactive=False
+

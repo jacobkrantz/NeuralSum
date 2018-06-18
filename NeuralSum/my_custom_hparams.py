@@ -117,7 +117,7 @@ def my_custom_hparams():
         # During training, we drop sequences whose inputs or targets are longer
         # than max_length.
         # If max_length==0, we use hparams.batch_size instead.
-        max_length=256,
+        max_length=0,
         # Maximum length in the smallest length bucket.  Setting this
         # flag too high will result in wasteful padding of short
         # sequences.  Due to some (hopefully) temporary hacks in the
@@ -272,7 +272,6 @@ def my_custom_hparams():
     hparams.learning_rate_warmup_steps = 8000
     hparams.learning_rate = 0.2
     hparams.prepend_mode = "prepend_inputs_masked_attention"
-    hparams.max_length = 0
 
     # serve parameters as object: tf.contrib.training.HParams
     return hparams
