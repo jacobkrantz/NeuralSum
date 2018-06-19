@@ -14,6 +14,8 @@ HPARAMS=my_custom_hparams
 DECODE_FILE=./data/duc2004/sentences.txt
 DECODE_FILE_OUT=./data/duc2004/generated.txt
 
+export CUDA_VISIBLE_DEVICES=1
+
 t2t-trainer \
 	--problem=$PROBLEM \
 	--model=$MODEL \
@@ -22,5 +24,5 @@ t2t-trainer \
 	--output_dir=$TRAIN_DIR \
 	--t2t_usr_dir=$USR_DIR \
 	--train_steps=3000 \
-	--keep_checkpoint_max=2
-  --worker_gpu=1
+	--keep_checkpoint_max=2 \
+  	--worker_gpu=1

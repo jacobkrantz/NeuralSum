@@ -61,4 +61,4 @@ class InferSent(object):
         return cosine_similarity(
             sentence_1.reshape(1,-1),
             sentence_2.reshape(1,-1)
-        )
+        )[0][0]

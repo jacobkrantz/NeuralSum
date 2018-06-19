@@ -14,6 +14,8 @@ HPARAMS=my_custom_hparams
 DECODE_FILE=./data/duc2004/sentences.txt
 DECODE_FILE_OUT=./data/duc2004/generated.txt
 
+export CUDA_VISIBLE_DEVICES=1
+
 t2t-datagen \
 	--t2t_usr_dir=$USR_DIR \
 	--data_dir=$DATA_DIR \

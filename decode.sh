@@ -20,6 +20,8 @@ DECODE_FILE_OUT=./data/duc2004/generated.txt
 BEAM_SIZE=4
 ALPHA=0.6
 
+export CUDA_VISIBLE_DEVICES=1
+
 t2t-decoder \
   --data_dir=$DATA_DIR \
   --problem=$PROBLEM \
@@ -31,5 +33,5 @@ t2t-decoder \
   --decode_from_file=$DECODE_FILE \
   --decode_to_file=$DECODE_FILE_OUT \
   --stop_at_eos=True \
-  --decode_interactive=False
+  --decode_interactive=False \
   --worker_gpu=1
