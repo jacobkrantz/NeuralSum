@@ -15,3 +15,4 @@ from word_mover_distance import WordMoverDistance
 # for tensor2tensor
 from . import summary_problem
 from . import my_custom_hparams
+from . import my_custom_transformer

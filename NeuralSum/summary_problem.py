@@ -49,11 +49,12 @@ class SummaryProblem(text_problems.Text2TextProblem):
         del tmp_dir
         del dataset_split
 
-        duc_2003_articles = parse_duc_2003()
-        duc_2004_articles = parse_duc_2004()
-        articles = duc_2003_articles + duc_2004_articles
+        # duc_2003_articles = parse_duc_2003()
+        # duc_2004_articles = parse_duc_2004()
+        # articles = duc_2003_articles + duc_2004_articles
+        articles = parse_gigaword(limit=2000, randomize=False)
 
-        num_to_check = 5
+        num_to_check = 5 # print out the first few
         num_checked = 0
         print('Data entry sample should be shown below:')
         for art in articles:

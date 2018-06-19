@@ -8,7 +8,7 @@ DATA_DIR=$USR_DIR/../data/tensor2tensor/data
 TMP_DIR=$USR_DIR/../data/tensor2tensor/tmp
 TRAIN_DIR=$USR_DIR/../data/tensor2tensor/train
 PROBLEM=summary_problem
-MODEL=transformer
+MODEL=my_custom_transformer
 HPARAMS=my_custom_hparams
 # location of file containing inputs to test against:
 DECODE_FILE=./data/duc2004/sentences.txt
@@ -27,9 +27,9 @@ t2t-decoder \
   --hparams_set=$HPARAMS \
   --output_dir=$TRAIN_DIR \
   --t2t_usr_dir=$USR_DIR \
-  --decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA","force_decode_length"=True,"extra_length"=10 \
+  --decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA","force_decode_length"=True,"extra_length"=12 \
   --decode_from_file=$DECODE_FILE \
   --decode_to_file=$DECODE_FILE_OUT \
   --stop_at_eos=True \
   --decode_interactive=False
-
+  --worker_gpu=1

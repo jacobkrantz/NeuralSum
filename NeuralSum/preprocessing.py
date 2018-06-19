@@ -1,7 +1,8 @@
 
 from config import config
-from ducArticle import DucArticle
+from duc_article import DucArticle
 
+import numpy as np
 from bs4 import BeautifulSoup
 from collections import Counter
 import nltk.data
@@ -42,13 +43,21 @@ def parse_duc_2003():
     """
     return _add_duc_summaries_2003(_get_duc_sentences_2003())
 
-# def display_articles(articles, number_to_display, random=False):
-#     if random:
-#         shuffle(articles)
-#     print "Contains", len(articles), "articles."
-#     for i in range(number_to_display):
-#         print articles[i]
-#         print ""
+def parse_gigaword(limit=None, randomize=True):
+    """
+    Reads all 3.8 million gigaword sentence-summary pairs into the
+    DucArticle format for use in training models.
+    Args:
+        limit (int): caps the number of articles to return. Default to all.
+        randomize (bool): should the limited article count be chosen randomly.
+    """
+    articles = _add_gigaword_summaries(_get_gigaword_sentences())
+    if limit is None:
+        return articles
+
+    if randomize:
+        np.random.shuffle(articles)
+    return articles[:limit]
 
 def load_word_embeddings():
     """
@@ -313,6 +322,33 @@ def _add_duc_summaries_2003(articles):
 
         article.gold_summaries = [_tokenize_sentence_generic(s) for s in gold_sums]
 
+    return articles
+
+def _get_gigaword_sentences():
+    """
+    get all of the sentences from the gigaword train data.
+    """
+    articles = list()
+    with open(config['gigaword_sen_folder'], 'r') as f:
+        for line in f:
+            art = DucArticle()
+            art.sentence = line.strip('\n')
+            articles.append(art)
+    return articles
+
+def _add_gigaword_summaries(articles):
+    """
+    get all of the summaries from the gigaword train data. Add them
+        to the article gold_summaries list.
+    """
+    summaries = list()
+    with open(config['gigaword_sum_folder'], 'r') as f:
+        for line in f:
+            summaries.append(line)
+
+    assert(len(summaries) == len(articles))
+    for i, summary in enumerate(summaries):
+        articles[i].gold_summaries = [summary.strip('\n')]
     return articles
 
 def _tokenize_sentence_2003(sentence):

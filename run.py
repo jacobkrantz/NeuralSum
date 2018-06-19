@@ -16,7 +16,8 @@ __version__ = '0.0.1'
 
 def dev_test():
     log.info("Running developer script")
-    ns.evaluate_examples()
+    # ns.evaluate_examples()
+    giga_articles = ns.parse_gigaword(limit=10)
     log.info("Done running developer script")
 
 def train():
