@@ -6,6 +6,8 @@ import numpy as np
 from bs4 import BeautifulSoup
 from collections import Counter
 import nltk.data
+from nltk import download
+from nltk.downloader import Downloader
 from random import shuffle
 import os
 from numpy import asarray
@@ -219,6 +221,9 @@ def _get_duc_sentences_2004():
     Returns:
         DucArticle
     """
+    if not Downloader().is_installed('punkt'):
+        download('punkt')
+
     filenames = list()
     for root, _, files in os.walk(config["duc4_sentences_folder"], topdown=False):
         for name in files:
