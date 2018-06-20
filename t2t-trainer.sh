@@ -23,6 +23,6 @@ t2t-trainer \
 	--data_dir=$DATA_DIR \
 	--output_dir=$TRAIN_DIR \
 	--t2t_usr_dir=$USR_DIR \
-	--train_steps=3000 \
-	--keep_checkpoint_max=2 \
+	--train_steps=74101 \
+	--keep_checkpoint_max=5 \
   	--worker_gpu=1
