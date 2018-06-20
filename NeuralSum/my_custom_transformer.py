@@ -536,7 +536,7 @@ def fast_decode(encoder_output,
 
     # @jacobkrantz HACK: truncate decoded because decoded_length
     # does not work.
-    max_decoded_word_cnt = 12
+    max_decoded_word_cnt = 14
     if top_beams == 1:
       decoded_ids = decoded_ids[:, 0, 1:max_decoded_word_cnt+1]
       scores = scores[:, 0]

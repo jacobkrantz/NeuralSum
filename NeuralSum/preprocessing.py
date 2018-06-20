@@ -10,21 +10,22 @@ from nltk import download
 from nltk.downloader import Downloader
 from random import shuffle
 import os
+import re
 from numpy import asarray
 """
 Provides utilities to load and preprocess all of the data used in the project.
 Filename: 'preprocessing.py'
 Methods:
-    - parse_duc_2003()
     - parse_duc_2004()
-    - display_articles(articles, number_to_display, random=False)
+    - parse_duc_2003()
+    - parse_gigaword(limit=None, randomize=True)
     - load_word_embeddings()
     - get_vocabulary(articles)
     - get_max_sentence_len(articles)
     - get_max_summary_len(articles)
     - get_sen_sum_pairs(articles)
     - fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_length=None)
-    - display_articles(articles)
+    - display_articles(articles, number_to_display, random=False)
 """
 
 def parse_duc_2004():
@@ -206,12 +207,18 @@ def fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_len
         'max_target_seq_length': max_target_seq_length
     }
 
-def display_articles(articles):
+def display_articles(articles, number_to_display=None, randomize=False):
+    """
+    If number_to_display is None, display all.
+    If random is True, shuffle articles before selecting and displaying.
+    """
+    if randomize:
+        np.random.shuffle(articles)
+    if number_to_display is not None:
+        articles = articles[:number_to_display]
     for art in articles:
         print str(art)
         print('')
-
-
 
 
 def _get_duc_sentences_2004():
@@ -378,15 +385,15 @@ def _tokenize_sentence_generic(sentence):
     space out 's and contractions isn't -> is n't or -> isnt
     space out all punctuation
     remove quotations
-    replace all numbers with ... something...
+    replace all numbers with '#'
     """
     sen = sentence.lower().replace('\n', ' ')
-    sen = sen.replace(';', '').replace("'", '').replace('"', '').replace('_', ' ')
-    sen = sen.replace('?', ' ?').replace('. ', ' ').replace(', ', ' ')
-    sen = sen[:-1] if sen[-1] == '.' else sen
+    sen = sen.replace("'s", " 's")
+    sen = sen.replace("``", '').replace('(', ' ').replace(')', ' ').replace('*', ' ')
+    sen = sen.replace(';', '').replace('"', '').replace('_', ' ').replace(':', ' :')
+    sen = sen.replace('?', ' ?').replace(', ', ' , ')
+    sen = re.sub('\d', '#', sen) # replace numbers with '#'
+    sen = sen[:-1] + ' .' if sen[-1] == '.' else sen # space the ending '.'
 
-    sen = sen.split()
-    for word in sen:# remove : at end of some words
-        word = word[:-1] if word[-1] == ':' else word
-    sen = " ".join(sen) # remove duplicate whitespace
+    sen = " ".join(sen.split()) # remove duplicate whitespace
     return sen

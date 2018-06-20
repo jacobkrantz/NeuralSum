@@ -52,7 +52,7 @@ class SummaryProblem(text_problems.Text2TextProblem):
         # duc_2003_articles = parse_duc_2003()
         # duc_2004_articles = parse_duc_2004()
         # articles = duc_2003_articles + duc_2004_articles
-        articles = parse_gigaword(limit=2000, randomize=False)
+        articles = parse_gigaword(limit=3793957, randomize=False) # which leaves out 10k articles.
 
         num_to_check = 5 # print out the first few
         num_checked = 0

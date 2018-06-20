@@ -17,7 +17,7 @@ def my_custom_hparams():
         # (see problem.batch_size_means_tokens()), then this is the number
         # of tokens per batch per GPU or per TPU core.  Otherwise, this is
         # the number of examples per GPU or per TPU core.
-        batch_size=64,
+        batch_size=256,
         # If True, then if the features are of variable length, the batch_size is
         # used as the actual batch size (and not tokens per batch).
         use_fixed_batch_size=False,
