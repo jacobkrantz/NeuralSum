@@ -58,10 +58,16 @@ class WordMoverDistance(object):
         self.stopwords = stopwords.words('english')
 
     def get_avg_wmd(self, sentences_1, sentences_2):
-        return np.mean(list(starmap(
+        """
+        Returns:
+            (float): the mean distance,
+            (list<float>): list of calculated distances
+        """
+        distances = list(starmap(
             lambda s1,s2: self.get_wmd(s1,s2),
             zip(sentences_1, sentences_2)
-        )))
+        ))
+        return np.mean(distances), distances
 
     def get_wmd(self, sentence_1, sentence_2):
         sentence_1 = sentence_1.lower().split()

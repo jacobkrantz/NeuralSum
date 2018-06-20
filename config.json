@@ -1,9 +1,9 @@
 {
 	"log_level": "info",
-	"rouge": {
-		"reporting_metric": "recall",
+	"vert": {
+		"rouge_metric": "recall",
 		"output_report": true,
-		"reports_folder": "./data/out/rouge_reports/"
+		"reports_folder": "./data/out/vert_reports/"
 	},
 	"duc4_sentences_folder": "./data/duc2004/raw/docs/",
 	"duc3_sentences_folder": "./data/duc2003/docs/",

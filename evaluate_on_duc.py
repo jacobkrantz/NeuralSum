@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from NeuralSum import Evaluation
+from NeuralSum import Vert
 from config import config
 
 import logging as log
@@ -11,7 +11,7 @@ script for evaluated the tensor2tensor generated summaries that are located
 - opens up generated.txt and summaries.txt
 - compares line by line using the evaluation tool in NeuralSum.
 - outputs score report to file as specified in config or command line argument.
-- uses about 9GB of memory. Could be reduced by half, but major rework
+- uses about 7GB of memory. Could be reduced by half, but major rework
     of NeuralSum.Evaluation would have to be done.
 To run:
 >>> python evaluate_on_duc.py
@@ -39,15 +39,18 @@ def main(save_scores):
     log.info("Finished step: read data files.")
 
     log.info("Starting step: Evaluating " + str(len(generated)) + " summary pairs.")
-    eval = Evaluation()
-    log.info("Evaluation files loaded.")
-    generated = generated[len(generated)/4:]
-    summaries = summaries[len(summaries)/4:]
-    eval.display_scores(eval.test_all(
+    vert = ns.Vert()
+    # generated = generated[len(generated)/4:]
+    # summaries = summaries[len(summaries)/4:]
+    scores = vert.score(
         generated,
         summaries,
-        save_results=save_scores
-    ))
+        rouge_type=config['vert']['rouge_metric'],
+        verbose=False
+    )
+    vert.display_scores(scores)
+    if save_scores:
+        vert.output_report(scores, config['vert']['reports_folder'])
     log.info("Finished step: Evaluate summary pairs")
 
 if __name__ == '__main__':
@@ -63,4 +66,4 @@ if __name__ == '__main__':
             raise ValueError("Argument must be either 'save' or 'toss'")
         main(save_scores)
     else:
-        main(None)
+        main(config['vert']['output_report'])
