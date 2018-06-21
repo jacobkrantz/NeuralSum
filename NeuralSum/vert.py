@@ -6,6 +6,11 @@ import numpy as np
 from rouge import Rouge # https://github.com/pltrdy/rouge
 from InferSent import InferSent
 from word_mover_distance import WordMoverDistance
+import sys
+
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 class Vert(object):
     """
@@ -63,7 +68,7 @@ class Vert(object):
                 ]
         """
         self._verify_input(hyps, refs)
-
+        
         # calculate average InferSent cosine similarity of sentence vectors
         if self.infersent is None:
             self.infersent = InferSent()
@@ -87,9 +92,9 @@ class Vert(object):
             print('Word Mover\'s Distance scores calculated.')
 
         # calculate VERT score
-        vert_score = self._calc_vert_score_post(cos_sim, wmd_score)
+        vert_score = self._calc_avg_vert_score(all_cos_sims, all_wmd_scores)
         # alternate way(same result):
-        # vert_score = self._calc_avg_vert_score(all_cos_sims, all_wmd_scores)
+        # vert_score = self._calc_vert_score_post(cos_sim, wmd_score)
 
         # calculate rouge scores
         if self.rouge is None:
@@ -105,6 +110,8 @@ class Vert(object):
         if verbose:
             print('ROUGE ' + rouge_type + ' scores calculated.')
 
+        print r_scores
+        sys.exit()
         # compile and return scores
         scores = {
             'rouge-1':"{0:.3f}".format(rouge_1),

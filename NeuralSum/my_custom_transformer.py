@@ -213,6 +213,9 @@ class MyCustomTransformer(t2t_model.T2TModel):
     Raises:
       NotImplementedError: If there are multiple data shards.
     """
+    # @jacobkrantz HACK: set max length of output manually to 14.
+    decode_length = tf.constant(14)
+
     # For real-valued modalities use the slow decode path for now.
     if self._target_modality_is_real:
       return  super(Transformer, self)._greedy_infer(features, decode_length)
@@ -239,6 +242,9 @@ class MyCustomTransformer(t2t_model.T2TModel):
               None if using greedy decoding (beam_size=1)
       }
     """
+    # @jacobkrantz HACK: set max length of output manually to 14.
+    decode_length = tf.constant(14)
+
     if self._hparams.self_attention_type != "dot_product":
       # Caching is not guaranteed to work with attention types other than
       # dot_product.
@@ -281,6 +287,9 @@ class MyCustomTransformer(t2t_model.T2TModel):
     Raises:
       NotImplementedError: If there are multiple data shards.
     """
+    # @jacobkrantz HACK: set max length of output manually to 14.
+    decode_length = tf.constant(14)
+
     if self._num_datashards != 1:
       raise NotImplementedError("Fast decoding only supports a single shard.")
     dp = self._data_parallelism
@@ -484,6 +493,9 @@ def fast_decode(encoder_output,
     Raises:
       NotImplementedError: If beam size > 1 with partial targets.
   """
+  # @jacobkrantz HACK: set max length of output manually to 14.
+  decode_length = tf.constant(14)
+
   if encoder_output is not None:
     batch_size = common_layers.shape_list(encoder_output)[0]
 
