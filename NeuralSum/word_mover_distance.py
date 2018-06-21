@@ -41,7 +41,7 @@ class WordMoverDistance(object):
             download('stopwords')
 
         if config['wmd']['save_memory']:
-            # 25% lower but 50% memory savings.
+            # 25% slower but 50% memory savings.
             self.model = KeyedVectors.load_word2vec_format(
                 config['wmd']['word2vec'],
                 binary=True,

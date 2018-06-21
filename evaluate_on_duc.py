@@ -39,14 +39,12 @@ def main(save_scores):
     log.info("Finished step: read data files.")
 
     log.info("Starting step: Evaluating " + str(len(generated)) + " summary pairs.")
-    vert = ns.Vert()
-    # generated = generated[len(generated)/4:]
-    # summaries = summaries[len(summaries)/4:]
+    vert = Vert()
     scores = vert.score(
         generated,
         summaries,
         rouge_type=config['vert']['rouge_metric'],
-        verbose=False
+        verbose=True
     )
     vert.display_scores(scores)
     if save_scores:
