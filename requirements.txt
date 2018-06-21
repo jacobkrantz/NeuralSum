@@ -10,3 +10,4 @@ pyemd-0.5.1
 gensim
 pattern
 tensor2tensor==1.6.5
+lxml

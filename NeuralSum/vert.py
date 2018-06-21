@@ -62,7 +62,7 @@ class Vert(object):
                   'avg_hyp_word_cnt','avg_hyp_word_cnt'
                 ]
         """
-        assert(len(hyps) == len(refs))
+        self._verify_input(hyps, refs)
 
         # calculate average InferSent cosine similarity of sentence vectors
         if self.infersent is None:
@@ -119,7 +119,7 @@ class Vert(object):
             'num_tested':str(len(hyps)),
         }
         if verbose:
-            self.display_scores()
+            self.display_scores(scores)
         return scores
 
     @classmethod
@@ -146,6 +146,28 @@ class Vert(object):
         for k, v in scores.iteritems():
             tab = ':\t\t' if len(k) < 15 else ':\t'
             print(k + tab + str(v))
+
+    def _verify_input(self, hyps, refs):
+        """
+        Makes sures the data is in proper format for score tests.
+        """
+        assert(len(hyps) == len(refs))
+        bad_ids = []
+        for i in range(len(hyps)):
+            if (hyps[i] == '') or (refs[i] == ''):
+                bad_ids.append(i)
+        bad_ids.sort(reverse=True) # reverse so we can pop by id
+        for bad_id in bad_ids:
+            hyps.pop(bad_id)
+            refs.pop(bad_id)
+        if len(bad_ids) > 0:
+            print("WARNING: Removed " + str(len(bad_ids)) + " testing points: null values.")
+
+        assert(len(hyps) == len(refs))
+        for i, sent in enumerate(hyps):
+            assert(len(sent) > 0)
+        for sent in refs:
+            assert(len(sent) > 0)
 
     def _get_avg_word_count(self, sentences):
         """
