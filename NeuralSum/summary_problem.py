@@ -67,3 +67,11 @@ class SummaryProblem(text_problems.Text2TextProblem):
                     "inputs": art.sentence,
                     "targets": summ
                 }
+
+    def eval_metrics(self):
+        """ Override: ignore some metrics """
+        return [
+            metrics.Metrics.ACC, metrics.Metrics.ACC_TOP5,
+            metrics.Metrics.NEG_LOG_PERPLEXITY, metrics.Metrics.ROUGE_2_F,
+            metrics.Metrics.ROUGE_L_F
+        ]

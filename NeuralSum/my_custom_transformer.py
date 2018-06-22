@@ -445,6 +445,20 @@ class MyCustomTransformer(t2t_model.T2TModel):
         ret["outputs"] = ret["outputs"][:, :, partial_targets_length:]
     return ret
 
+    def eval_autoregressive(self, features=None, decode_length=14):
+        """Autoregressive eval.
+        Quadratic time in decode_length.
+        Args:
+          features: an map of string to `Tensor`
+          decode_length: an integer.  How many additional timesteps to decode.
+        Returns:
+          logits: `Tensor`
+          losses: a dictionary: {loss-name (string): floating point `Scalar`}.
+              Contains a single key "training".
+        """
+        # @jacobkrantz HACK: fix decoding length to 14.
+        results = self._slow_greedy_infer(features, decode_length=14)
+        return results["logits"], results["losses"]
 
 def fast_decode(encoder_output,
                 encoder_decoder_attention_bias,

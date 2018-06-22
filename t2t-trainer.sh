@@ -25,5 +25,5 @@ t2t-trainer \
 	--t2t_usr_dir=$USR_DIR \
 	--train_steps=148202 \
 	--keep_checkpoint_max=5 \
-	--local_eval_frequency=5000
+	--local_eval_frequency=5000 \
   	--worker_gpu=1
