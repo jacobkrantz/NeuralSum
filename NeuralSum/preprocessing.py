@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 from config import config
 from duc_article import DucArticle
@@ -216,17 +217,14 @@ def display_articles(articles, number_to_display=None, randomize=False):
         np.random.shuffle(articles)
     if number_to_display is not None:
         articles = articles[:number_to_display]
-    for art in articles:
-        print str(art)
-        print('')
-
+    map(lambda art: print(art, '\n'), articles)
 
 def _get_duc_sentences_2004():
     """
     Create a DucArticle for each article in the docs folder of Duc2004.
     Complete fields 'ID', 'folder', and 'sentence'.
     Returns:
-        DucArticle
+        list<DucArticle>
     """
     if not Downloader().is_installed('punkt'):
         download('punkt')
@@ -391,7 +389,7 @@ def _tokenize_sentence_generic(sentence):
     sen = sen.replace("'s", " 's")
     sen = sen.replace("``", '').replace('(', ' ').replace(')', ' ').replace('*', ' ')
     sen = sen.replace(';', '').replace('"', '').replace('_', ' ').replace(':', ' :')
-    sen = sen.replace('?', ' ?').replace(', ', ' , ')
+    sen = sen.replace('?', ' ?').replace(', ', ' , ').replace('!', ' !')
     sen = re.sub('\d', '#', sen) # replace numbers with '#'
     sen = sen[:-1] + ' .' if sen[-1] == '.' else sen # space the ending '.'
 

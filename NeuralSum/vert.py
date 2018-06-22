@@ -1,14 +1,16 @@
+from __future__ import print_function
 
-import datetime
-import json
-from itertools import starmap
-import numpy as np
-from rouge import Rouge # https://github.com/pltrdy/rouge
 from InferSent import InferSent
 from word_mover_distance import WordMoverDistance
+
+import datetime
+from itertools import starmap
+import json
+import numpy as np
+from rouge import Rouge # https://github.com/pltrdy/rouge
 import sys
 
-
+# avoid decoding errors from unicode -> ASCII
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -17,6 +19,13 @@ class Vert(object):
         Performs automatic evaluation of summaries using the proposed
             VERT metric. Generates score reports and can output to file.
         Can be memory intensive.
+
+        Class Methods:
+            - output_report(scores, filepath)
+            - display_scores(scores)
+        Instance Methods:
+            - score_from_articles(articles, rouge_type='recall', verbose=False)
+            - score(hyps, refs, rouge_type='recall', verbose=False):
     """
 
     def __init__(self, save_memory=True):
@@ -30,7 +39,7 @@ class Vert(object):
         self.rouge = None
         self.save_mem = save_memory
 
-    def score_from_articles(articles, rouge_type='recall', verbose=False):
+    def score_from_articles(self, articles, rouge_type='recall', verbose=False):
         """
         Args:
             articles (list<DucArticle>)
@@ -53,19 +62,25 @@ class Vert(object):
 
     def score(self, hyps, refs, rouge_type='recall', verbose=False):
         """
+        Scores the quality of hypothesis summaries vs their respective
+            reference summary.
         Args:
-            hyps (list<string>): generated summary list to score
+            hyps (list<string>): hypothesis summary list to score
             refs (list<string>): reference summary list to test against
             rouge_type (string): can be 'recall', 'precision', or 'f-measure'
             verbose (bool): if True prints status updates.
         Returns:
             dict of average score results. keys:
-                [
-                  'rouge-1','rouge-2','rouge-l',
-                  'cos_sim','wm_dist','vert_score',
-                  'test_type','num_tested',
-                  'avg_hyp_word_cnt','avg_hyp_word_cnt'
-                ]
+              'rouge-1', unigram overlap as a percentage
+              'rouge-2', bigram overlap as a percentage
+              'rouge-l', longest common subsequence
+              'cos_sim', cosine similarity using InferSent vectors
+              'wm_dist', Word Mover's Distance using GenSim
+              'vert_score', VERT score that combines cos_sim and wm_dist
+              'test_type', ROUGE type: one of [recall,precision, f-measure]
+              'num_tested', number of hyp-ref pairs
+              'avg_hyp_word_cnt', average number of words in each hypothesis
+              'avg_ref_word_cnt' average number of words in each reference
         """
         self._verify_input(hyps, refs)
 
@@ -115,9 +130,9 @@ class Vert(object):
             'rouge-1':"{0:.3f}".format(rouge_1),
             'rouge-2':"{0:.3f}".format(rouge_2),
             'rouge-l':"{0:.3f}".format(rouge_l),
-            'cos_sim':"{0:.4f}".format(cos_sim),
-            'wm_dist':"{0:.3f}".format(wmd_score),
-            'vert_score':"{0:.3f}".format(vert_score),
+            'cos_sim':"{0:.5f}".format(cos_sim),
+            'wm_dist':"{0:.5f}".format(wmd_score),
+            'vert_score':"{0:.5f}".format(vert_score),
             'avg_hyp_word_cnt':"{0:.3f}".format(self._get_avg_word_count(hyps)),
             'avg_ref_word_cnt':"{0:.3f}".format(self._get_avg_word_count(refs)),
             'test_type': rouge_type,
@@ -131,7 +146,7 @@ class Vert(object):
     def output_report(self, scores, filepath):
         """
         Outputs the given scores dictionary to a json file in
-            the rouge reports folder
+            the rouge reports folder. Works for any dictionary.
         Args:
             scores (dict): VERT scores
             filename (string): location to output score report

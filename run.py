@@ -16,35 +16,26 @@ __version__ = '0.0.1'
 
 def dev_test():
     log.info("Running developer script")
-    hyps = [
-        'hundreds of a voice in state state newspapers newspapers newspapers newspapers and jailed jailed opposition leader leader have turned to the internet to the internet',
-        'indonesian president clinton of ``finds finds finds a summit of asia-pacific ``difficult because of ``asked his concerns about the arrest of malaysias former deputy deputy president',
-        'among among asias leaders prime minister mahathir mohamad was mohamad as a man a bold: a physical and social social social social social that this party into the world affairs',
-        'on on on the face of dissident anwar ibrahim on newspaper front front river for two days and from the the internet are are are unconstitutional and hundreds of malaysias'
-    ]
-    refs = [
-        'anwar supporters speak out on internet unblocked by government',
-        'regional leaders consider boycotting malaysian meeting due to anwar arrest',
-        'mahathirs 17 years saw great advances now economic crisis instability',
-        'malaysian prime minister expresses surprise at behavior of his police'
-    ]
-    vert = ns.Vert()
-    # scores = vert.score(hyps, refs, verbose=True)
-    scores = {
-        'avg_hyp_word_cnt': 27.750,
-        'approx_vert_score': 0.443,
-        'avg_ref_word_cnt': 9.750,
-        'wm_dist': 3.225,
-        'cos_sim': 0.7027,
-        'rouge-2': 0.000,
-        'num_tested': 4,
-        'rouge-1': 7.778,
-        'test_type': 'recall',
-        'vert_score': 0.443,
-        'rouge-l': 7.778
-    }
-    vert.display_scores(scores)
-    vert.output_report(scores, config["vert"]["reports_folder"])
+    duc_arts = ns.parse_duc_2003()
+    print("num articles: " + str(len(duc_arts)))
+    sent_word_lens = []
+    sent_char_lens = []
+    sum_word_lens = []
+    sum_char_lens = []
+    summ_count = 0
+    for art in duc_arts:
+        sent_word_lens.append(len(art.sentence.split()))
+        sent_char_lens.append(len(art.sentence))
+        for summ in art.gold_summaries:
+            summ_count += 1
+            sum_word_lens.append(len(summ.split()))
+            sum_char_lens.append(len(summ))
+    print("num summaries: " + str(summ_count))
+    print 'sent_word_lens ' + str(np.mean(sent_word_lens))
+    print 'sent_char_lens ' + str(np.mean(sent_char_lens))
+    print 'sum_word_lens ' + str(np.mean(sum_word_lens))
+    print 'sum_char_lens ' + str(np.mean(sum_char_lens))
+
     log.info("Done running developer script")
 
 def train():

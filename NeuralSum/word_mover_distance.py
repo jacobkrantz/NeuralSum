@@ -41,7 +41,7 @@ class WordMoverDistance(object):
             download('stopwords')
 
         if config['wmd']['save_memory']:
-            # 25% slower but 50% memory savings.
+            # 25% slower but 50% memory savings by reducing datatype size.
             self.model = KeyedVectors.load_word2vec_format(
                 config['wmd']['word2vec'],
                 binary=True,
@@ -49,7 +49,8 @@ class WordMoverDistance(object):
             )
         else:
             self.model = KeyedVectors.load_word2vec_format(
-                config['wmd']['word2vec'], binary=True
+                config['wmd']['word2vec'],
+                binary=True
             )
         if config['wmd']['normalize']:
             # computes L2-norms of word weight vectors
@@ -59,10 +60,14 @@ class WordMoverDistance(object):
 
     def get_avg_wmd(self, sentences_1, sentences_2):
         """
+        Calculates the average word mover's distance element-wise between
+            two lists of sentences.
         Returns:
             (float): the mean distance,
             (list<float>): list of calculated distances
         """
+        assert(len(sentences_1) == len(sentences_2))
+
         distances = list(starmap(
             lambda s1,s2: self.get_wmd(s1,s2),
             zip(sentences_1, sentences_2)
@@ -70,9 +75,19 @@ class WordMoverDistance(object):
         return np.mean(distances), distances
 
     def get_wmd(self, sentence_1, sentence_2):
+        """
+        Calculates the word mover's distance for a single sentence pair.
+        If the distance is greater than 5.0, truncates to 5.0. This is because
+        model.wmdistance() occasionally returns 'inf'.
+        Returns:
+            float: WMD with a range of [0.0,5.0]
+        """
         sentence_1 = sentence_1.lower().split()
         sentence_2 = sentence_2.lower().split()
 
         sentence_1 = [w for w in sentence_1 if w not in self.stopwords]
         sentence_2 = [w for w in sentence_2 if w not in self.stopwords]
-        return self.model.wmdistance(sentence_1, sentence_2)
+
+        max_dist = 5.0
+        dist = self.model.wmdistance(sentence_1, sentence_2)
+        return dist if dist < max_dist else max_dist
