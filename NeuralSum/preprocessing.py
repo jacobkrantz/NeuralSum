@@ -17,9 +17,9 @@ from numpy import asarray
 Provides utilities to load and preprocess all of the data used in the project.
 Filename: 'preprocessing.py'
 Methods:
-    - parse_duc_2004()
-    - parse_duc_2003()
-    - parse_gigaword(limit=None, randomize=True)
+    - parse_duc_2004(limit=None, randomize=False)
+    - parse_duc_2003(limit=None, randomize=False)
+    - parse_gigaword(limit=None, randomize=False)
     - load_word_embeddings()
     - get_vocabulary(articles)
     - get_max_sentence_len(articles)
@@ -29,39 +29,49 @@ Methods:
     - display_articles(articles, number_to_display, random=False)
 """
 
-def parse_duc_2004():
+def parse_duc_2004(limit=None, randomize=False):
     """
     Reads all of DUC-2004 into a single data structure.
-    Eventually will probably need to tokenize everything.
+    Args:
+        limit (int): caps the number of articles to return. Default to all.
+        randomize (bool): should the articles be chosen and returned randomly.
     Returns:
         list<DucArticle>
     """
-    return _add_duc_summaries_2004(_get_duc_sentences_2004())
+    articles = _add_duc_summaries_2004(_get_duc_sentences_2004())
+    if randomize:
+        np.random.shuffle(articles)
 
-def parse_duc_2003():
+    return articles if limit is None else articles[:limit]
+
+def parse_duc_2003(limit=None, randomize=False):
     """
     Reads all of DUC-2003 into a single data structure.
-    Eventually will probably need to tokenize everything.
+    Args:
+        limit (int): caps the number of articles to return. Default to all.
+        randomize (bool): should the articles be chosen and returned randomly.
     Returns:
         list<DucArticle>
     """
-    return _add_duc_summaries_2003(_get_duc_sentences_2003())
+    articles = _add_duc_summaries_2003(_get_duc_sentences_2003())
+    if randomize:
+        np.random.shuffle(articles)
 
-def parse_gigaword(limit=None, randomize=True):
+    return articles if limit is None else articles[:limit]
+
+def parse_gigaword(limit=None, randomize=False):
     """
     Reads all 3.8 million gigaword sentence-summary pairs into the
     DucArticle format for use in training models.
     Args:
         limit (int): caps the number of articles to return. Default to all.
-        randomize (bool): should the limited article count be chosen randomly.
+        randomize (bool): should the articles be chosen and returned randomly.
     """
     articles = _add_gigaword_summaries(_get_gigaword_sentences())
-    if limit is None:
-        return articles
-
     if randomize:
         np.random.shuffle(articles)
-    return articles[:limit]
+
+    return articles if limit is None else articles[:limit]
 
 def load_word_embeddings():
     """
