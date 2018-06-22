@@ -9,7 +9,7 @@ TMP_DIR=$USR_DIR/../data/tensor2tensor/tmp
 TRAIN_DIR=$USR_DIR/../data/tensor2tensor/train
 PROBLEM=summary_problem
 MODEL=my_custom_transformer
-HPARAMS=my_custom_hparams
+HPARAMS=base_2
 # location of file containing inputs to test against:
 DECODE_FILE=./data/duc2004/sentences.txt
 DECODE_FILE_OUT=./data/duc2004/generated.txt

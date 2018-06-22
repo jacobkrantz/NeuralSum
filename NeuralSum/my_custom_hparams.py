@@ -10,14 +10,15 @@ Shell override- add this flag: to t2t-traner:
 
 """
 
-@registry.register_hparams('my_custom_hparams')
-def my_custom_hparams():
+@registry.register_hparams('base_1')
+# use this for running experiments 0-6: latest in server folder base_1.
+def base_1():
     hparams = tf.contrib.training.HParams(
         # If the problem consists of variable-length sequences
         # (see problem.batch_size_means_tokens()), then this is the number
         # of tokens per batch per GPU or per TPU core.  Otherwise, this is
         # the number of examples per GPU or per TPU core.
-        batch_size=256,
+        batch_size=512,
         # If True, then if the features are of variable length, the batch_size is
         # used as the actual batch size (and not tokens per batch).
         use_fixed_batch_size=False,
@@ -274,4 +275,13 @@ def my_custom_hparams():
     hparams.prepend_mode = "prepend_inputs_masked_attention"
 
     # serve parameters as object: tf.contrib.training.HParams
+    return hparams
+
+@registry.register_hparams('base_2')
+def base_2():
+    # make small adjustments to base_1 params
+    hparams = base_1()
+    hparams.hidden_size = 1024
+    hparams.moe_hidden_sizes="2048",
+    hparams.num_heads = 16
     return hparams

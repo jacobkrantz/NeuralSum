@@ -9,7 +9,7 @@ TMP_DIR=$USR_DIR/../data/tensor2tensor/tmp
 TRAIN_DIR=$USR_DIR/../data/tensor2tensor/train
 PROBLEM=summary_problem
 MODEL=my_custom_transformer
-HPARAMS=my_custom_hparams
+HPARAMS=base_2
 # location of file containing inputs to test against:
 DECODE_FILE=./data/duc2004/sentences.txt
 DECODE_FILE_OUT=./data/duc2004/generated.txt
@@ -23,7 +23,7 @@ t2t-trainer \
 	--data_dir=$DATA_DIR \
 	--output_dir=$TRAIN_DIR \
 	--t2t_usr_dir=$USR_DIR \
-	--train_steps=148202 \
-	--keep_checkpoint_max=5 \
-	--local_eval_frequency=5000 \
-  	--worker_gpu=1
+	--train_steps=200000 \
+	--keep_checkpoint_max=20 \
+	--local_eval_frequency=10000 \
+	--worker_gpu=1

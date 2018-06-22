@@ -9,7 +9,7 @@ TMP_DIR=$USR_DIR/../data/tensor2tensor/tmp
 TRAIN_DIR=$USR_DIR/../data/tensor2tensor/train
 PROBLEM=summary_problem
 MODEL=my_custom_transformer
-HPARAMS=my_custom_hparams
+HPARAMS=base_2
 # location of file containing inputs to test against:
 DECODE_FILE=./data/duc2004/sentences.txt
 DECODE_FILE_OUT=./data/duc2004/generated.txt
@@ -22,6 +22,9 @@ ALPHA=0.6
 
 export CUDA_VISIBLE_DEVICES=1
 
+# decode_hparams should include "extra_length"=14, but it does not work.
+# we manually set the decode length to be 14 in my_custom_transformer.
+
 t2t-decoder \
   --data_dir=$DATA_DIR \
   --problem=$PROBLEM \
@@ -29,7 +32,7 @@ t2t-decoder \
   --hparams_set=$HPARAMS \
   --output_dir=$TRAIN_DIR \
   --t2t_usr_dir=$USR_DIR \
-  --decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA","force_decode_length"=True,"extra_length"=12 \
+  --decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA","force_decode_length"=True \
   --decode_from_file=$DECODE_FILE \
   --decode_to_file=$DECODE_FILE_OUT \
   --stop_at_eos=True \
