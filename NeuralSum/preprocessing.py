@@ -396,7 +396,7 @@ def _tokenize_sentence_generic(sentence):
     replace all numbers with '#'
     """
     sen = sentence.lower().replace('\n', ' ')
-    sen = sen.replace("'s", " 's")
+    sen = sen.replace("'s", " 's").replace("'re", " 're")
     sen = sen.replace("``", '').replace('(', ' ').replace(')', ' ').replace('*', ' ')
     sen = sen.replace(';', '').replace('"', '').replace('_', ' ').replace(':', ' :')
     sen = sen.replace('?', ' ?').replace(', ', ' , ').replace('!', ' !')

@@ -3,6 +3,7 @@ from preprocessing import *
 
 from tensor2tensor.data_generators import problem
 from tensor2tensor.data_generators import text_problems
+from tensor2tensor.utils import metrics
 from tensor2tensor.utils import registry
 
 @registry.register_problem
