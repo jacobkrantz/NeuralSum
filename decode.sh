@@ -9,7 +9,7 @@ TMP_DIR=$USR_DIR/../data/tensor2tensor/tmp
 TRAIN_DIR=$USR_DIR/../data/tensor2tensor/train
 PROBLEM=summary_problem
 MODEL=my_custom_transformer
-HPARAMS=base_2
+HPARAMS=base_1
 # location of file containing inputs to test against:
 DECODE_FILE=./data/duc2004/sentences.txt
 DECODE_FILE_OUT=./data/duc2004/generated.txt
@@ -17,7 +17,7 @@ DECODE_FILE_OUT=./data/duc2004/generated.txt
 # Example of populating DECODE_FILE with inputs to decode:
 # echo "Makes vanish every star" >> $DECODE_FILE
 
-BEAM_SIZE=4
+BEAM_SIZE=2
 ALPHA=0.6
 
 export CUDA_VISIBLE_DEVICES=1
