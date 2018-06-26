@@ -13,6 +13,7 @@ script for evaluated the tensor2tensor generated summaries that are located
 - outputs score report to file as specified in config or command line argument.
 - uses about 7GB of memory. Could be reduced by half, but major rework
     of NeuralSum.Evaluation would have to be done.
+- specify whether DUC2003 or DUC2004 is used
 To run:
 >>> python evaluate_on_duc.py
 To override whether or not a score report is saved:
@@ -20,8 +21,9 @@ To override whether or not a score report is saved:
 >>> python evaluate_on_duc.py toss
 """
 
-GENERATED = './data/duc2004/generated.txt'
-SUMMARIES = './data/duc2004/summaries.txt'
+DUC = 'duc2004'
+GENERATED = './data/' + DUC + '/generated.txt'
+SUMMARIES = './data/' + DUC + '/summaries.txt'
 
 def main(save_scores):
     log.info("Starting step: read data files.")
