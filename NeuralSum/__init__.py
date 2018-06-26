@@ -13,5 +13,6 @@ from vert import Vert
 
 # for tensor2tensor
 from . import summary_problem
+from . import summary_modality
 from . import my_custom_hparams
 from . import my_custom_transformer
