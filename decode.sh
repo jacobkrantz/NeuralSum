@@ -17,7 +17,7 @@ DECODE_FILE_OUT=./data/duc2004/generated.txt
 # Example of populating DECODE_FILE with inputs to decode:
 # echo "Makes vanish every star" >> $DECODE_FILE
 
-BEAM_SIZE=4
+BEAM_SIZE=2
 ALPHA=0.6
 
 export CUDA_VISIBLE_DEVICES=1

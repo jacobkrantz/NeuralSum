@@ -395,7 +395,7 @@ def _tokenize_sentence_generic(sentence):
     remove quotations
     replace all numbers with '#'
     """
-    sen = sentence.lower().replace('\n', ' ')
+    sen = sentence.lower().replace('\n', ' ').replace("''", " ").replace("``", " ")
     sen = sen.replace("'s", " 's").replace("'re", " 're")
     sen = sen.replace("``", '').replace('(', ' ').replace(')', ' ').replace('*', ' ')
     sen = sen.replace(';', '').replace('"', '').replace('_', ' ').replace(':', ' :')
