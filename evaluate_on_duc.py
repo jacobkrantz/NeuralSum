@@ -28,14 +28,23 @@ SUMMARIES = './data/' + DUC + '/summaries.txt'
 def main(save_scores):
     log.info("Starting step: read data files.")
     generated = list()
-    with open(GENERATED, mode='r') as gen_f:
-        for line in gen_f:
-            generated.append(line.strip('\n'))
+
+    try:
+        with open(GENERATED, mode='r') as gen_f:
+            for line in gen_f:
+                generated.append(line.strip('\n'))
+    except IOError as e:
+        print(e)
+        print('Try running `python process_duc.py <duc_year>` to load the data')
 
     summaries = list()
-    with open(SUMMARIES, mode='r') as summ_f:
-        for line in summ_f:
-            summaries.append(line.strip('\n'))
+    try:
+        with open(SUMMARIES, mode='r') as summ_f:
+            for line in summ_f:
+                summaries.append(line.strip('\n'))
+    except IOError as e:
+        print(e)
+        print('Try running `python process_duc.py <duc_year>` to load the data')
 
     assert(len(generated) == len(summaries))
     log.info("Finished step: read data files.")
@@ -51,7 +60,7 @@ def main(save_scores):
     vert.display_scores(scores)
     if save_scores:
         vert.output_report(scores, config['vert']['reports_folder'])
-    log.info("Finished step: Evaluate summary pairs")
+    log.info("Finished step: Evaluate summary pairs.")
 
 if __name__ == '__main__':
     log.getLogger()

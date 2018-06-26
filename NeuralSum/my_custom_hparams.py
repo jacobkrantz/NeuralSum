@@ -10,9 +10,9 @@ Shell override- add this flag: to t2t-traner:
 
 """
 
-@registry.register_hparams('base_1')
+@registry.register_hparams('exp_6')
 # use this for running experiments 0-6: latest in server folder base_1.
-def base_1():
+def exp_6():
     hparams = tf.contrib.training.HParams(
         # If the problem consists of variable-length sequences
         # (see problem.batch_size_means_tokens()), then this is the number
@@ -70,9 +70,9 @@ def base_1():
         learning_rate_decay_staircase=False,
         learning_rate_minimum=None,
         learning_rate_decay_rate=1.0,
-        learning_rate_warmup_steps=4000,
+        learning_rate_warmup_steps=8000,
         learning_rate_cosine_cycle_steps=250000,
-        learning_rate=0.1,
+        learning_rate=0.2,
         sampling_method="argmax",  # "argmax" or "random"
         sampling_temp=1.0,  # temperature for sampling
         # expand the logits a piece at a time - saves memory.
@@ -146,10 +146,11 @@ def base_1():
         # modality, add an entry to this semicolon-separated string. Entries are
         # formatted "feature_name:modality_type:modality_name", e.g.
         # "inputs:symbol:default;other_inputs:audio:identity".
-        input_modalities="default",  # We don't use empty string in params.
+        input_modalities="symbol:summary",  # We don't use empty string in params.
         # To override the default target modality, specify
         # "modality_type:modality_name", e.g. "symbol:ctc".
-        target_modality="default",
+        target_modality="symbol:summary",
+        # @jacobkrantz: input_modalities and target_modality were "default".
         # The maximum length of "input" sequence.
         # Sequences longer than this value will be truncated. 0 or negative values
         # mean there is no maximum or truncation.
@@ -187,7 +188,7 @@ def base_1():
         #     position in the inputs portion can see the
         #     entire inputs portion.  This removes the challenge of
         #     autoregressively predicting the inputs portion.
-        prepend_mode="none",
+        prepend_mode="prepend_inputs_masked_attention",
         # Scheduled sampling is interesting for auto-regressive models.
         # It runs an additional step using the generated output as autoregressive
         # targets, which can improve the models inference results later. The
@@ -245,9 +246,9 @@ def base_1():
     hparams.add_hparam("parameter_attention_value_channels", 0)
     # All hyperparameters ending in "dropout" are automatically set to 0.0
     # when not in training mode.
-    hparams.add_hparam("attention_dropout", 0.0)
+    hparams.add_hparam("attention_dropout", 0.1)
     hparams.add_hparam("attention_dropout_broadcast_dims", "")
-    hparams.add_hparam("relu_dropout", 0.0)
+    hparams.add_hparam("relu_dropout", 0.1)
     hparams.add_hparam("relu_dropout_broadcast_dims", "")
     hparams.add_hparam("pos", "timing")  # timing, none
     hparams.add_hparam("nbr_decoder_problems", 1)
@@ -267,21 +268,22 @@ def base_1():
     #    'transformer_prepend'
     hparams.layer_preprocess_sequence = "n"
     hparams.layer_postprocess_sequence = "da"
-    hparams.layer_prepostprocess_dropout = 0.1
-    hparams.attention_dropout = 0.1
-    hparams.relu_dropout = 0.1
-    hparams.learning_rate_warmup_steps = 8000
-    hparams.learning_rate = 0.2
-    hparams.prepend_mode = "prepend_inputs_masked_attention"
 
     # serve parameters as object: tf.contrib.training.HParams
     return hparams
 
-@registry.register_hparams('base_2')
-def base_2():
-    # make small adjustments to base_1 params
-    hparams = base_1()
+@registry.register_hparams('exp_7')
+def exp_7():
+    # make small adjustments to exp_6 params.
+    # this was much worse than just exp_6.
+    hparams = exp_6()
     hparams.hidden_size = 1024
-    hparams.moe_hidden_sizes="2048",
+    hparams.moe_hidden_sizes="4096",
     hparams.num_heads = 16
+    return hparams
+
+@registry.register_hparams('exp_8')
+def exp_8():
+    # mess with attention mechanisms
+    hparams = exp_6()
     return hparams

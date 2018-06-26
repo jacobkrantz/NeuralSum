@@ -1,15 +1,17 @@
-# NeuralSumm
+# NeuralSum
 Abstractive Sentence Summarization with Attentive Neural Techniques. Presents a new way to evaluate auto-generated abstractive summaries.  
 
 ## Using Tensor2Tensor  
 There are 5 scripts for using Tensor2Tensor models, 3 shell and 2 python. These scripts can be modified to utilize different models, data, and other parameters. For model-specific parameters, edit `/NeuralSum/NeuralSum/my_custom_hparams.py`. For using the crappy model that does not utilize Tensor2Tensor, start everything with `run.py`. This also allows you to play with Keras models quite rapidly. To do so, make model adjustments in `/NeuralSum/NeuralSum/summary_model.py`.  
 
 ##### Scripts:  
-`datagen.sh`: generate the data to be trained and tested with.  
-`t2t-trainer.sh`: trains a model using the given parameters.  
-`decode.sh`: Run inputs through the model. Can either be done iteractively or from files.  
-`process_duc4.py`: extract sentences and summaries for the raw folders of DUC2004 so that they can easily be evaluated against in:  
-`evaluate_on_duc.py`: evaluate the various scores of generated summaries against target summaries.  
+- `datagen.sh`: generate the data to be trained and tested with.  
+- `t2t-trainer.sh`: trains a model using the given parameters.  
+- `decode.sh`: Run inputs through the model. Can either be done iteractively or from files.  
+- `process_duc.py`: extract sentences and summaries for the raw folders of DUC2004 so that they can easily be evaluated against in the next script. Can be called for loading either DUC2003 or DUC2004 as such:  
+`>>> process_duc.py 2003`  
+`>>> process_duc.py 2004`  
+- `evaluate_on_duc.py`: evaluate the various scores of generated summaries against target summaries. Make sure that the global variable `DUC` is set either to `duc2003` or `duc2004` depending on which you want to use.  
 
 ## Datasets  
 All datasets are stored in a specific way in the ./data folder. You can ask the maintainers for access to this data.  
@@ -19,12 +21,9 @@ All datasets are stored in a specific way in the ./data folder. You can ask the 
 - GloVe embeddings  
 - Word2Vec embeddings  
 
-## Todo  
-Begin Gigaword data gathering and processing. Make Gigaword data work with Tensor2Tensor model training. Ignore evaluation. Include basic data info in ROUGE reports: which data was trained on, which was tested with, how many words for training/testing, etc.  
-
 ## Unit Tests  
 To run all unit tests, execute:  
-`python -m unittest discover -s tests`  
+`>>> python -m unittest discover -s tests`  
 
 ##  Evaluation Process  
 ROUGE scoring has limitations when used for abstractive summarization. It does not accurately reward paraphrasing or other human-like elements of a summary. A bad paraphrase is incorrectly given the same score as a good paraphrase. To fix this problem, we need an evaluation metric that understands sentence semantics.  
@@ -79,7 +78,7 @@ Evaluation Scores:
 |   WMD   |  0.000 |  
 
 #### Conclusion  
-Notice that the ROUGE scores of examples 1 & 2 stayed the exact same, not differentiating between a clearly better summary and a clearly worse summary. On the other hand, the cosine similarity was able to identify the difference the bad summary showed, punishing the similarity score by 7.6%. The acceptable summary in Example 1 was only punished 2.1%. When looking at the Word Mover Distance (WMD), we see that the bad summary was given a 24% larger distance from the target than the acceptable summary (0.512 vs 0.418). Thus WMD also shows the ability to judge semantically. Cos-Sim and WMD metrics are different from each other: Cos-Sim is a neural approach using sentence vectors while WMD is an aggregated distance measurement between a sentence's word vectors. Further distinguishing them is the source of word vectors: GloVe for Cos-Sim, and Word2Vec for WMD. Cos-Sim is of course using cosine similarity while WMD uses Euclidean distane. Finally, Cos-Sim is a value to be maximized whereas WMD is a value to be minimized. Because of these differences, both metrics provide value in analyzing abstractive summaries.  
+Notice that the ROUGE scores of examples 1 & 2 stayed the exact same, not differentiating between a clearly better summary and a clearly worse summary. On the other hand, the cosine similarity was able to identify the difference the bad summary showed, punishing the similarity score by 7.6%. The acceptable summary in Example 1 was only punished 2.1%. When looking at the Word Mover Distance (WMD), we see that the bad summary was given a 24% larger distance from the target than the acceptable summary (0.512 vs 0.418). Thus WMD also shows the ability to judge semantically. Cos-Sim and WMD metrics are different from each other: Cos-Sim is a neural approach using sentence vectors while WMD is an aggregated distance measurement between a sentence's word vectors. Further distinguishing them is the source of word vectors: GloVe for Cos-Sim, and Word2Vec for WMD. Cos-Sim is of course using cosine similarity while WMD uses Euclidean distance. Finally, Cos-Sim is a value to be maximized whereas WMD is a value to be minimized. Because of these differences, both metrics provide value in analyzing abstractive summaries.  
 
 ## Acknowledgements  
 
