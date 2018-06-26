@@ -255,7 +255,7 @@ def exp_6():
     hparams.add_hparam("proximity_bias", False)
     hparams.add_hparam("causal_decoder_self_attention", True)
     hparams.add_hparam("use_pad_remover", True)
-    hparams.add_hparam("self_attention_type", "dot_product")
+    hparams.add_hparam("self_attention_type", "dot_product") # ignored 6/26
     hparams.add_hparam("max_relative_position", 0)
     hparams.add_hparam("conv_first_kernel", 3)
     # These parameters are only used when ffn_layer=="local_moe_tpu"
@@ -264,10 +264,21 @@ def exp_6():
     hparams.moe_num_experts = 16
     hparams.moe_loss_coef = 1e-3
 
-    # these are added for param version transformer_prepend_v2 called by
+    # These are added for param version transformer_prepend_v2 called by
     #    'transformer_prepend'
     hparams.layer_preprocess_sequence = "n"
     hparams.layer_postprocess_sequence = "da"
+
+    # These params define which attention mechanism is used for each of
+    #   the three multiheaded attention mechanisms.
+    #   hparams.self_attention_type now does nothing.
+    # Can be one of:
+    #   "dot_product", "dot_product_relative", "dot_product_relative_v2",
+    #   "local_mask_right", "local_within_block_mask_right", "local_unmasked",
+    #   "masked_dilated_1d", "unmasked_dilated_1d", "edge_vector"
+    hparams.add_hparam("encoder_self_attention_type", 'dot_product')
+    hparams.add_hparam("decoder_self_attention_type", 'dot_product')
+    hparams.add_hparam("enc_dec_attention_type", 'dot_product')
 
     # serve parameters as object: tf.contrib.training.HParams
     return hparams
