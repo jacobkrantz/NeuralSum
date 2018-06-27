@@ -11,8 +11,8 @@ PROBLEM=summary_problem_small
 MODEL=my_custom_transformer
 HPARAMS=exp_11
 # location of file containing inputs to test against:
-DECODE_FILE=./data/duc2004/sentences.txt
-DECODE_FILE_OUT=./data/duc2004/generated.txt
+DECODE_FILE=./data/duc2003/sentences.txt
+DECODE_FILE_OUT=./data/duc2003/generated.txt
 
 # Example of populating DECODE_FILE with inputs to decode:
 # echo "Makes vanish every star" >> $DECODE_FILE
@@ -41,4 +41,4 @@ t2t-decoder \
   --decode_to_file=$DECODE_FILE_OUT \
   --stop_at_eos=True \
   --decode_interactive=False \
-  --worker_gpu=WORKER_GPU
+  --worker_gpu=$WORKER_GPU

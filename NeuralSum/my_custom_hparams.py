@@ -276,6 +276,10 @@ def exp_6():
     #   "dot_product", "dot_product_relative", "dot_product_relative_v2",
     #   "local_mask_right", "local_within_block_mask_right", "local_unmasked",
     #   "masked_dilated_1d", "unmasked_dilated_1d", "edge_vector"
+    #
+    # graph attention still works this way for T2T v.1.6.5.
+    # future versions moved graph attention to message passing:
+    #   commit 90c5f41f92dd35b37d7e0003f81e82c8bae6648c
     hparams.add_hparam("encoder_self_attention_type", 'dot_product')
     hparams.add_hparam("decoder_self_attention_type", 'dot_product')
     hparams.add_hparam("enc_dec_attention_type", 'dot_product')
@@ -307,12 +311,10 @@ def exp_11():
 def exp_12():
     hparams = exp_6()
     # mess with attention mechanisms.
-    # graph attention still works this way for T2T v.1.6.5.
-    # future versions moved graph attention to message passing:
-    #   commit 90c5f41f92dd35b37d7e0003f81e82c8bae6648c
-    hparams.encoder_self_attention_type = 'edge_vector'
-    hparams.decoder_self_attention_type = 'edge_vector'
-    hparams.enc_dec_attention_type = 'edge_vector'
+    hparams.encoder_self_attention_type = 'dot_product'
+    hparams.decoder_self_attention_type = 'dot_product'
+    hparams.enc_dec_attention_type = 'dot_product_relative'
+    hparams.max_relative_position = 3
     return hparams
 
 @registry.register_hparams('exp_13')
@@ -321,5 +323,6 @@ def exp_13():
     # mess with attention mechanisms. no changes made yet.
     hparams.encoder_self_attention_type = 'dot_product'
     hparams.decoder_self_attention_type = 'dot_product'
-    hparams.enc_dec_attention_type = 'dot_product'
+    hparams.enc_dec_attention_type = 'dot_product_relative'
+    hparams.max_relative_position = 5
     return hparams
