@@ -4,7 +4,8 @@ Abstractive Sentence Summarization with Attentive Neural Techniques. Presents a 
 ## Using Tensor2Tensor  
 There are 5 scripts for using Tensor2Tensor models, 3 shell and 2 python. These scripts can be modified to utilize different models, data, and other parameters. For model-specific parameters, edit `/NeuralSum/NeuralSum/my_custom_hparams.py`. For using the crappy model that does not utilize Tensor2Tensor, start everything with `run.py`. This also allows you to play with Keras models quite rapidly. To do so, make model adjustments in `/NeuralSum/NeuralSum/summary_model.py`.  
 
-##### Scripts:  
+#### Scripts:  
+Use these for end to end model usage.  
 - `datagen.sh`: generate the data to be trained and tested with.  
 - `t2t-trainer.sh`: trains a model using the given parameters.  
 - `decode.sh`: Run inputs through the model. Can either be done iteractively or from files.  
@@ -12,6 +13,17 @@ There are 5 scripts for using Tensor2Tensor models, 3 shell and 2 python. These 
 `>>> process_duc.py 2003`  
 `>>> process_duc.py 2004`  
 - `evaluate_on_duc.py`: evaluate the various scores of generated summaries against target summaries. Make sure that the global variable `DUC` is set either to `duc2003` or `duc2004` depending on which you want to use.  
+
+#### Hyperparameter Sets  
+Hyperparameter sets (Hparams) are objects containing all parameters except certain decoding params. All sets are found in `my_custom_hparams.py`.  
+- `exp_6`: base parameters for the Transformer. Used in experiments 1-6.  
+- `exp_7`: "big" parameters for a more complex Transformer.  
+- `exp_11` - `exp_14`: based off of `exp_6` with attention parameter modifications.
+
+#### T2T Problems  
+Problems define the data used and which metrics to be included for EVAL mode.  
+- `summary_problem`: uses all but the last 10k pairs of the Gigaword dataset (3793957 articles).
+- `summary_problem_small`: uses the first 25% of Gigaword for training (950989 articles).  
 
 ## Datasets  
 All datasets are stored in a specific way in the ./data folder. You can ask the maintainers for access to this data.  

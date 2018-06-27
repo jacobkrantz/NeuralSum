@@ -12,7 +12,7 @@ from word_mover_distance import WordMoverDistance
 from vert import Vert
 
 # for tensor2tensor
-from . import summary_problem
-from . import summary_modality
+from . import summary_problems
+from . import summary_modalities
 from . import my_custom_hparams
 from . import my_custom_transformer

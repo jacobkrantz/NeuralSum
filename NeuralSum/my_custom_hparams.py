@@ -293,8 +293,33 @@ def exp_7():
     hparams.num_heads = 16
     return hparams
 
-@registry.register_hparams('exp_8')
-def exp_8():
-    # mess with attention mechanisms
+@registry.register_hparams('exp_11')
+def exp_11():
     hparams = exp_6()
+    # mess with attention mechanisms.
+    # No changes are to be made (baseline).
+    hparams.encoder_self_attention_type = 'dot_product'
+    hparams.decoder_self_attention_type = 'dot_product'
+    hparams.enc_dec_attention_type = 'dot_product'
+    return hparams
+
+@registry.register_hparams('exp_12')
+def exp_12():
+    hparams = exp_6()
+    # mess with attention mechanisms.
+    # graph attention still works this way for T2T v.1.6.5.
+    # future versions moved graph attention to message passing:
+    #   commit 90c5f41f92dd35b37d7e0003f81e82c8bae6648c
+    hparams.encoder_self_attention_type = 'edge_vector'
+    hparams.decoder_self_attention_type = 'edge_vector'
+    hparams.enc_dec_attention_type = 'edge_vector'
+    return hparams
+
+@registry.register_hparams('exp_13')
+def exp_13():
+    hparams = exp_6()
+    # mess with attention mechanisms. no changes made yet.
+    hparams.encoder_self_attention_type = 'dot_product'
+    hparams.decoder_self_attention_type = 'dot_product'
+    hparams.enc_dec_attention_type = 'dot_product'
     return hparams
