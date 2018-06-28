@@ -625,6 +625,90 @@ def fast_decode(encoder_output,
 
   return {"outputs": decoded_ids, "scores": scores}
 
+def _beam_decode_slow(self, features, decode_length, beam_size, top_beams,
+                    alpha):
+    """Slow version of Beam search decoding: overridden from T2TModel.
+    Quadratic time in decode_length.
+    Args:
+      features: an map of string to `Tensor`
+      decode_length: an integer.  How many additional timesteps to decode.
+      beam_size: number of beams.
+      top_beams: an integer. How many of the beams to return.
+      alpha: Float that controls the length penalty. larger the alpha, stronger
+        the preference for longer translations.
+    Returns:
+       samples: an integer `Tensor`. Top samples from the beam search
+    """
+    batch_size = common_layers.shape_list(features["inputs"])[0]
+
+    def symbols_to_logits_fn(ids):
+        """Go from ids to logits."""
+        ids = tf.expand_dims(tf.expand_dims(ids, axis=2), axis=3)
+        ids = tf.pad(ids[:, 1:], [[0, 0], [0, 1], [0, 0], [0, 0]])
+        if "partial_targets" in features:
+            pt = features["partial_targets"]
+            pt_length = common_layers.shape_list(pt)[1]
+            pt = tf.tile(pt, [1, beam_size])
+            pt = tf.reshape(pt, [batch_size * beam_size, pt_length, 1, 1])
+            ids = tf.concat([pt, ids], axis=1)
+
+        features["targets"] = ids
+        self._coverage = None
+        logits, _ = self(features)  # pylint: disable=not-callable
+        # now self._coverage is a coverage tensor for the first datashard.
+        # it has shape [batch_size] and contains floats between 0 and
+        # source_length.
+        if self._problem_hparams:
+            modality = self._problem_hparams.target_modality
+        if modality.top_is_pointwise:
+            return tf.squeeze(logits, axis=[1, 2, 3])
+        # -1 due to the pad above.
+        current_output_position = common_layers.shape_list(ids)[1] - 1
+        logits = logits[:, current_output_position, :, :]
+        return tf.squeeze(logits, axis=[1, 2])
+
+    initial_ids = tf.zeros([batch_size], dtype=tf.int32)
+
+    if self.has_input:
+        inputs_old = features["inputs"]
+        features["inputs"] = tf.expand_dims(features["inputs"], 1)
+        if len(features["inputs"].shape) < 5:
+            features["inputs"] = tf.expand_dims(features["inputs"], 4)
+        # Expand the inputs in to the beam size.
+        features["inputs"] = tf.tile(features["inputs"], [1, beam_size, 1, 1, 1])
+        s = common_layers.shape_list(features["inputs"])
+        features["inputs"] = tf.reshape(features["inputs"],
+                                      [s[0] * s[1], s[2], s[3], s[4]])
+
+    target_modality = self._problem_hparams.target_modality
+    vocab_size = target_modality.top_dimensionality
+
+    # # input length used to be added to the decode_length. Lets not do that...
+    # decode_length = tf.constant(decode_length)
+    # if "partial_targets" not in features:
+    #     decode_length += common_layers.shape_list(features["inputs"])[1]
+    ids, scores = beam_search.beam_search(
+        symbols_to_logits_fn,
+        initial_ids,
+        beam_size,
+        decode_length,
+        vocab_size,
+        alpha,
+        stop_early=(top_beams == 1)
+    )
+
+    # Set inputs back to the unexpanded inputs to not to confuse the Estimator!
+    if self.has_input:
+        features["inputs"] = inputs_old
+
+    # Return `top_beams` decodings (also remove initial id from the beam search)
+    if top_beams == 1:
+        samples = ids[:, 0, 1:]
+    else:
+        samples = ids[:, :top_beams, 1:]
+
+    return {"outputs": samples, "scores": scores}
+
 def features_to_nonpadding(features, inputs_or_targets="inputs"):
   key = inputs_or_targets + "_segmentation"
   if features and key in features:
