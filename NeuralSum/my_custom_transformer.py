@@ -866,7 +866,11 @@ def transformer_decoder(decoder_input,
   with tf.variable_scope(name):
     for layer in range(hparams.num_decoder_layers or hparams.num_hidden_layers):
       layer_name = "layer_%d" % layer
+
+      # caching only works with dot_product attention
       layer_cache = cache[layer_name] if cache is not None else None
+      self_cache = layer_cache if hparams.decoder_self_attention_type == 'dot_product' else None
+      enc_dec_cache = layer_cache if hparams.enc_dec_attention_type == 'dot_product' else None
       with tf.variable_scope(layer_name):
         with tf.variable_scope("self_attention"):
           y = common_attention.multihead_attention(
@@ -883,7 +887,7 @@ def transformer_decoder(decoder_input,
               block_width=hparams.block_width,
               save_weights_to=save_weights_to,
               max_relative_position=hparams.max_relative_position,
-              cache=layer_cache,
+              cache=self_cache,
               make_image_summary=make_image_summary,
               dropout_broadcast_dims=attention_dropout_broadcast_dims,
               max_length=hparams.get("max_length"))
@@ -904,7 +908,7 @@ def transformer_decoder(decoder_input,
                 block_length=hparams.block_length,
                 block_width=hparams.block_width,
                 save_weights_to=save_weights_to,
-                cache=layer_cache,
+                cache=enc_dec_cache,
                 make_image_summary=make_image_summary,
                 dropout_broadcast_dims=attention_dropout_broadcast_dims,
                 max_length=hparams.get("max_length"))
