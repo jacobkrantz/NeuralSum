@@ -222,39 +222,48 @@ class MyCustomTransformer(t2t_model.T2TModel):
     with tf.variable_scope(self.name):
       return self._fast_decode(features, decode_length)
 
-  def _beam_decode(self, features, decode_length, beam_size, top_beams, alpha):
-    """Beam search decoding.
+    def _beam_decode(self, features, decode_length, beam_size, top_beams, alpha):
+        """Beam search decoding.
 
-    Args:
-      features: an map of string to `Tensor`
-      decode_length: an integer.  How many additional timesteps to decode.
-      beam_size: number of beams.
-      top_beams: an integer. How many of the beams to return.
-      alpha: Float that controls the length penalty. larger the alpha, stronger
-        the preference for longer translations.
+        Args:
+          features: an map of string to `Tensor`
+          decode_length: an integer.  How many additional timesteps to decode.
+          beam_size: number of beams.
+          top_beams: an integer. How many of the beams to return.
+          alpha: Float that controls the length penalty. larger the alpha, stronger
+            the preference for longer translations.
 
-    Returns:
-      A dict of decoding results {
-          "outputs": integer `Tensor` of decoded ids of shape
-              [batch_size, <= decode_length] if beam_size == 1 or
-              [batch_size, top_beams, <= decode_length]
-          "scores": decoding log probs from the beam search,
-              None if using greedy decoding (beam_size=1)
-      }
-    """
-    # @jacobkrantz HACK: set max length of output manually to 14.
-    decode_length = tf.constant(14)
+        Returns:
+          A dict of decoding results {
+              "outputs": integer `Tensor` of decoded ids of shape
+                  [batch_size, <= decode_length] if beam_size == 1 or
+                  [batch_size, top_beams, <= decode_length]
+              "scores": decoding log probs from the beam search,
+                  None if using greedy decoding (beam_size=1)
+          }
+        """
+        # @jacobkrantz HACK: set max length of output manually to 14.
+        decode_length = tf.constant(14)
 
-    if self._hparams.self_attention_type != "dot_product":
-      # Caching is not guaranteed to work with attention types other than
-      # dot_product.
-      # TODO(petershaw): Support fast decoding when using relative
-      # position representations, i.e. "dot_product_relative" attention.
-      return self._beam_decode_slow(features, decode_length, beam_size,
-                                    top_beams, alpha)
-    with tf.variable_scope(self.name):
-      return self._fast_decode(features, decode_length, beam_size, top_beams,
-                               alpha)
+        if (self._hparams.encoder_self_attention_type != "dot_product"
+                    or self._hparams.decoder_self_attention_type != "dot_product"
+                    or self._hparams.enc_dec_attention_type != "dot_product"):
+            # Caching only works with dot_product attention.
+            return self._beam_decode_slow(
+                features,
+                decode_length,
+                beam_size,
+                top_beams,
+                alpha
+            )
+        with tf.variable_scope(self.name):
+            return self._fast_decode(
+                features,
+                decode_length,
+                beam_size,
+                top_beams,
+                alpha
+            )
 
   def _fast_decode(self,
                    features,

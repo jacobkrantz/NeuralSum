@@ -318,7 +318,8 @@ def exp_12():
     hparams.encoder_self_attention_type = 'dot_product_relative'
     hparams.decoder_self_attention_type = 'dot_product_relative'
     hparams.enc_dec_attention_type = 'dot_product'
-    hparams.max_relative_position = 5
+    hparams.max_relative_position = 20
+    hparams.pos = None
     return hparams
 
 @registry.register_hparams('exp_13')
