@@ -261,6 +261,10 @@ def exp_6():
     # These parameters are only used when ffn_layer=="local_moe_tpu"
     hparams.add_hparam("moe_overhead_train", 1.0)
     hparams.add_hparam("moe_overhead_eval", 2.0)
+    # local self attention parameters.
+    # block_width is filter width. should be less than block_length.
+    hparams.add_hparam("block_length", 128)
+    hparams.add_hparam("block_width", 128)
     hparams.moe_num_experts = 16
     hparams.moe_loss_coef = 1e-3
 
@@ -311,18 +315,22 @@ def exp_11():
 def exp_12():
     hparams = exp_6()
     # mess with attention mechanisms.
-    hparams.encoder_self_attention_type = 'dot_product'
-    hparams.decoder_self_attention_type = 'dot_product'
-    hparams.enc_dec_attention_type = 'dot_product_relative'
-    hparams.max_relative_position = 3
+    hparams.encoder_self_attention_type = 'dot_product_relative'
+    hparams.decoder_self_attention_type = 'dot_product_relative'
+    hparams.enc_dec_attention_type = 'dot_product'
+    hparams.max_relative_position = 5
     return hparams
 
 @registry.register_hparams('exp_13')
 def exp_13():
     hparams = exp_6()
-    # mess with attention mechanisms. no changes made yet.
-    hparams.encoder_self_attention_type = 'dot_product'
-    hparams.decoder_self_attention_type = 'dot_product'
-    hparams.enc_dec_attention_type = 'dot_product_relative'
-    hparams.max_relative_position = 5
+    # Bidirectional Block Self-Attention
+    # https://arxiv.org/abs/1804.00857
+    hparams.encoder_self_attention_type = 'local_unmasked'
+    hparams.decoder_self_attention_type = 'local_unmasked'
+    hparams.enc_dec_attention_type = 'dot_product'
+
+    hparams.block_length = 128
+    # filter width:
+    hparams.block_width = 100 # 100 is default of local_attention_1d()
     return hparams
