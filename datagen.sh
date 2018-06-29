@@ -9,7 +9,7 @@ TMP_DIR=$USR_DIR/../data/tensor2tensor/tmp
 TRAIN_DIR=$USR_DIR/../data/tensor2tensor/train
 PROBLEM=summary_problem_small
 MODEL=my_custom_transformer
-HPARAMS=exp_11
+HPARAMS=exp_13
 # location of file containing inputs to test against:
 DECODE_FILE=./data/duc2003/sentences.txt
 DECODE_FILE_OUT=./data/duc2003/generated.txt
@@ -19,8 +19,8 @@ DECODE_FILE_OUT=./data/duc2003/generated.txt
 
 BEAM_SIZE=2
 ALPHA=0.6
-TRAIN_STEPS=50000
-EVAL_FREQ=5000
+TRAIN_STEPS=1000
+EVAL_FREQ=1000
 KEEP_CKPTS=20
 WORKER_GPU=1
 
