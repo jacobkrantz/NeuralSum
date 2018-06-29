@@ -265,6 +265,9 @@ def exp_6():
     # block_width is filter width. should be less than block_length.
     hparams.add_hparam("block_length", 128)
     hparams.add_hparam("block_width", 128)
+    # dilated attention parameters
+    hparams.add_hparam('gap_size', 0)
+    hparams.add_hparam('num_memory_blocks', 2)
     hparams.moe_num_experts = 16
     hparams.moe_loss_coef = 1e-3
 
@@ -315,6 +318,7 @@ def exp_11():
 def exp_12():
     hparams = exp_6()
     # mess with attention mechanisms.
+    # Use relative positional embeddings instead of absolute
     hparams.encoder_self_attention_type = 'dot_product_relative'
     hparams.decoder_self_attention_type = 'dot_product_relative'
     hparams.enc_dec_attention_type = 'dot_product'
@@ -334,4 +338,51 @@ def exp_13():
     hparams.block_length = 128
     # filter width:
     hparams.block_width = 100 # 100 is default of local_attention_1d()
+    return hparams
+
+@registry.register_hparams('exp_14')
+def exp_14():
+    # increase the number of vector components to learn relative
+    # embeddings for.
+    hparams = exp_12()
+    hparams.max_relative_position = 100
+    return hparams
+
+@registry.register_hparams('exp_15')
+def exp_15():
+    # increase the number of vector components to learn relative
+    # embeddings for.
+    hparams = exp_12()
+    hparams.max_relative_position = 8
+    return hparams
+
+@registry.register_hparams('exp_16')
+def exp_16():
+    # Use experiment 12, except mask the right side of positional
+    #   embeddings.
+    # Wait for exp 14 to finish so that we know which is better, 12 or 14.
+    # replace exp_12() with exp_14() if 14 performs better.
+    hparams = exp_12()
+    hparams.encoder_self_attention_type = 'dot_product_relative_v2'
+    hparams.decoder_self_attention_type = 'dot_product_relative_v2'
+    return hparams
+
+@registry.register_hparams('exp_17')
+def exp_17():
+    # try using relative dot product attention for enc_dec
+    hparams = exp_12()
+    hparams.enc_dec_attention_type = 'dot_product_relative'
+    return hparams
+
+@registry.register_hparams('exp_18')
+def exp_18():
+    hparams = exp_6()
+    params.encoder_self_attention_type = 'unmasked_dilated_1d'
+    hparams.decoder_self_attention_type = 'unmasked_dilated_1d'
+    hparams.enc_dec_attention_type = 'dot_product'
+
+    hparams.block_length = 64
+    hparams.block_width = 64
+    hparams.gap_size = 0
+    hparms.num_memory_blocks = 4
     return hparams
