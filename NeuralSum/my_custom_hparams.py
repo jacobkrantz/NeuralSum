@@ -319,6 +319,7 @@ def exp_12():
     hparams = exp_6()
     # mess with attention mechanisms.
     # Use relative positional embeddings instead of absolute
+    # dot_product_relative cannot be used with enc_dec attention
     hparams.encoder_self_attention_type = 'dot_product_relative'
     hparams.decoder_self_attention_type = 'dot_product_relative'
     hparams.enc_dec_attention_type = 'dot_product'
@@ -358,31 +359,73 @@ def exp_15():
 
 @registry.register_hparams('exp_16')
 def exp_16():
-    # Use experiment 12, except mask the right side of positional
-    #   embeddings.
-    # Wait for exp 14 to finish so that we know which is better, 12 or 14.
-    # replace exp_12() with exp_14() if 14 performs better.
-    hparams = exp_12()
-    hparams.encoder_self_attention_type = 'dot_product_relative_v2'
-    hparams.decoder_self_attention_type = 'dot_product_relative_v2'
-    return hparams
-
-@registry.register_hparams('exp_17')
-def exp_17():
-    # try using relative dot product attention for enc_dec
-    hparams = exp_12()
-    hparams.enc_dec_attention_type = 'dot_product_relative'
-    return hparams
-
-@registry.register_hparams('exp_18')
-def exp_18():
     hparams = exp_6()
-    params.encoder_self_attention_type = 'unmasked_dilated_1d'
+    hparams.encoder_self_attention_type = 'unmasked_dilated_1d'
     hparams.decoder_self_attention_type = 'unmasked_dilated_1d'
     hparams.enc_dec_attention_type = 'dot_product'
 
     hparams.block_length = 64
     hparams.block_width = 64
     hparams.gap_size = 0
-    hparms.num_memory_blocks = 4
+    hparams.num_memory_blocks = 4
     return hparams
+
+@registry.register_hparams('exp_17')
+def exp_17():
+    # same as exp_17, but mask the right side of memory blocks
+    hparams = exp_16()
+    hparams.encoder_self_attention_type = 'masked_dilated_1d'
+    hparams.decoder_self_attention_type = 'masked_dilated_1d'
+    return hparams
+
+@registry.register_hparams('exp_18')
+def exp_18():
+    # split sequence into memory blocks and mask the right side.
+    hparams = exp_6()
+    hparams.encoder_self_attention_type = 'local_mask_right'
+    hparams.decoder_self_attention_type = 'local_mask_right'
+    hparams.enc_dec_attention_type = 'dot_product'
+
+    hparams.block_length = 128
+    return hparams
+
+@registry.register_hparams('exp_19')
+def exp_19():
+    # Not sure what this one does.
+    hparams = exp_6()
+    hparams.encoder_self_attention_type = 'local_within_block_mask_right'
+    hparams.decoder_self_attention_type = 'local_within_block_mask_right'
+    hparams.enc_dec_attention_type = 'dot_product'
+
+    hparams.block_length = 128
+    return hparams
+
+@registry.register_hparams('exp_20')
+def exp_20():
+    # mask the right side of memory blocks in the decoder. Leave the encoder
+    # unmasked.
+    hparams = exp_16()
+    hparams.encoder_self_attention_type = 'unmasked_dilated_1d'
+    hparams.decoder_self_attention_type = 'masked_dilated_1d'
+    return hparams
+
+@registry.register_hparams('exp_21')
+def exp_21():
+    # mask the right side of memory blocks in the ecoder. Leave the decoder
+    # unmasked.
+    hparams = exp_16()
+    hparams.encoder_self_attention_type = 'masked_dilated_1d'
+    hparams.decoder_self_attention_type = 'unmasked_dilated_1d'
+    return hparams
+
+# # throws an error. Needs more time to debug.
+# @registry.register_hparams('exp_n') # tensor dimension error
+# def exp_n():
+#     # Use experiment 12, except mask the right side of positional
+#     #   embeddings.
+#     # Wait for exp 14 to finish so that we know which is better, 12 or 14.
+#     # replace exp_12() with exp_14() if 14 performs better.
+#     hparams = exp_12()
+#     hparams.encoder_self_attention_type = 'dot_product_relative_v2'
+#     hparams.decoder_self_attention_type = 'dot_product_relative_v2'
+#     return hparams
