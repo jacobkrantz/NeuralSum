@@ -402,7 +402,9 @@ class MyT2TModel(base.Layer):
         target_modality = target_modality["targets"]
       return self._top_single(body_output, target_modality, features)
 
-  def _loss_single(self, logits, target_modality, feature):
+  def _loss_single(self, logits, target_modality, inputs, targets):
+    # modified to pass inputs and targets to modaility loss fn.
+    #   ***only works for summary_modality.
     # The current bfloat16 version still uses float32 for most parts of backward
     # propagation to keep model quality, so cast back before computing the loss
     # value.
@@ -411,24 +413,14 @@ class MyT2TModel(base.Layer):
       return (tf.constant(0., dtype=tf.float32),
               tf.constant(1., dtype=tf.float32))
 
-    loss_num, loss_den = target_modality.loss(logits, feature)
+    loss_num, loss_den = target_modality.loss(logits, inputs, targets)
     loss_num *= self._problem_hparams.loss_multiplier
     return loss_num, loss_den
 
   def loss(self, logits, features):
+    """ modified to ignore case if isinstance(logits, dict)."""
     if isinstance(logits, dict):
-      if self._problem_hparams:
-        target_modality = self._problem_hparams.target_modality
-      else:
-        target_modality = {k: None for k in logits.keys()}
-      for k in logits.keys():
-        assert k in target_modality.keys(), (
-            "The key %s of model_body's returned logits dict must be in "
-            "problem_hparams.target_modality's dict." % k)
-      losses = {}
-      for k, v in six.iteritems(logits):
-        losses[k] = self._loss_single(v, target_modality[k], features[k])
-      return tf.add_n([n / d for n, d in losses.values()])
+      raise NotImplementedError("Deleted. Copy code from T2T if necessary.")
     else:
       if self._problem_hparams:
         target_modality = self._problem_hparams.target_modality
@@ -439,7 +431,12 @@ class MyT2TModel(base.Layer):
             "model_body returned single logits so 'targets' must be a key "
             "since problem_hparams.target_modality is a dict.")
         target_modality = target_modality["targets"]
-      return self._loss_single(logits, target_modality, features["targets"])
+      return self._loss_single(
+        logits,
+        target_modality,
+        features["inputs"],
+        features["targets"]
+      )
 
   def optimize(self, loss, num_async_replicas=1):
     """Return a training op minimizing loss."""
