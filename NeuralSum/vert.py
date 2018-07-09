@@ -151,12 +151,15 @@ class Vert(object):
             scores (dict): VERT scores
             filename (string): location to output score report
         Returns:
-            None
+            string: filename of report
         """
         dt = str(datetime.datetime.now().isoformat())[:-5]
         name = "vert_scores_" + dt + ".json"
-        with open(filepath + name, 'w') as f:
+        filename = filepath + name
+        with open(filename, 'w') as f:
             json.dump(scores, f, indent=2, sort_keys=True)
+
+        return filename
 
     @classmethod
     def display_scores(self, scores):

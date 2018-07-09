@@ -412,7 +412,7 @@ def exp_20():
 @registry.register_hparams('exp_21')
 def exp_21():
     # mask the right side of memory blocks in the ecoder. Leave the decoder
-    # unmasked.
+    # unmasked. Did not generate any summaries...
     hparams = exp_16()
     hparams.encoder_self_attention_type = 'masked_dilated_1d'
     hparams.decoder_self_attention_type = 'unmasked_dilated_1d'

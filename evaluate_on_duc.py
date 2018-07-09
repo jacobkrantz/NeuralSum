@@ -6,7 +6,7 @@ from config import config
 import logging as log
 import sys
 """
-script for evaluated the tensor2tensor generated summaries that are located
+script for evaluating the tensor2tensor generated summaries that are located
     in the output location specified in the decoding shell script.
 - opens up generated.txt and summaries.txt
 - compares line by line using the evaluation tool in NeuralSum.
