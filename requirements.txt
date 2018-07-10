@@ -13,3 +13,4 @@ tensor2tensor==1.6.5
 lxml
 matplotlib
 sklearn
+fire
