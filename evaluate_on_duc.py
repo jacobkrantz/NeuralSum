@@ -21,7 +21,7 @@ To override whether or not a score report is saved:
 >>> python evaluate_on_duc.py toss
 """
 
-DUC = 'duc2003'
+DUC = 'duc2004'
 GENERATED = './data/' + DUC + '/generated.txt'
 SUMMARIES = './data/' + DUC + '/summaries.txt'
 

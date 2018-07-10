@@ -60,7 +60,7 @@ class SummaryProblem(text_problems.Text2TextProblem):
         Returns:
           VocabType constant
         """
-        return VocabType.SUBWORD
+        return text_problems.VocabType.SUBWORD
 
     def generate_samples(self, data_dir, tmp_dir, dataset_split):
         """

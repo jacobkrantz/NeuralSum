@@ -53,9 +53,9 @@ class SummaryModality(modalities.SymbolModality):
         )
 
         # additional losses based on inputs here
-        with tf.variable_scope("input-based-loss"):
-            losses = tf.Variable(0.0, tf.float32)
-            loss_numerator = tf.add(losses, loss_numerator)
+        # with tf.variable_scope("input-based-loss"):
+        #     losses = tf.Variable(0.0, tf.float32)
+        #     loss_numerator = tf.add(losses, loss_numerator)
         # end additional losses
 
         return loss_numerator, loss_denominator
