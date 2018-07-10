@@ -44,7 +44,7 @@ class SummaryProblem(text_problems.Text2TextProblem):
         }]
 
     @property
-      def vocab_type(self):
+    def vocab_type(self):
         """What kind of vocabulary to use.
         `VocabType`s:
           * `SUBWORD`: `SubwordTextEncoder`, an invertible wordpiece vocabulary.
