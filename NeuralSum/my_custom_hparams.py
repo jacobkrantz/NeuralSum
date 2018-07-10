@@ -188,7 +188,9 @@ def exp_6():
         #     position in the inputs portion can see the
         #     entire inputs portion.  This removes the challenge of
         #     autoregressively predicting the inputs portion.
-        prepend_mode="prepend_inputs_masked_attention",
+        # @jacobkrantz was prepend_inputs_masked_attention. It is a bad idea to
+        #     prepend inputs to targets for summarization.
+        prepend_mode="none",
         # Scheduled sampling is interesting for auto-regressive models.
         # It runs an additional step using the generated output as autoregressive
         # targets, which can improve the models inference results later. The
@@ -297,7 +299,6 @@ def exp_6():
 @registry.register_hparams('exp_7')
 def exp_7():
     # make small adjustments to exp_6 params.
-    # this was much worse than just exp_6.
     hparams = exp_6()
     hparams.hidden_size = 1024
     hparams.moe_hidden_sizes="4096",

@@ -43,6 +43,25 @@ class SummaryProblem(text_problems.Text2TextProblem):
             "shards": 1,
         }]
 
+    @property
+      def vocab_type(self):
+        """What kind of vocabulary to use.
+        `VocabType`s:
+          * `SUBWORD`: `SubwordTextEncoder`, an invertible wordpiece vocabulary.
+            Must provide `self.approx_vocab_size`. Generates the vocabulary based on
+            the training data. To limit the number of samples the vocab generation
+            looks at, override `self.max_samples_for_vocab`. Recommended and
+            default.
+          * `CHARACTER`: `ByteTextEncoder`, encode raw bytes.
+          * `TOKEN`: `TokenTextEncoder`, vocabulary based on a file. Must provide a
+            vocabulary file yourself (`TokenTextEncoder.store_to_file`) because one
+            will not be generated for you. The vocab file should be stored in
+            `data_dir/` with the name specified by `self.vocab_filename`.
+        Returns:
+          VocabType constant
+        """
+        return VocabType.SUBWORD
+
     def generate_samples(self, data_dir, tmp_dir, dataset_split):
         """
         Steps:
