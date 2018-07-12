@@ -29,8 +29,8 @@ def evaluate(which_duc='2003', save_report=True):
     Returns:
         dict of scores
     """
-    generated_f = './data/' + which_duc + '/generated.txt'
-    summaries_f = './data/' + which_duc + '/summaries.txt'
+    generated_f = './data/duc' + str(which_duc) + '/generated.txt'
+    summaries_f = './data/duc' + str(which_duc) + '/summaries.txt'
 
     log.info("Starting step: read data files.")
     generated = list()
