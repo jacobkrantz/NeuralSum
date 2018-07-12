@@ -419,6 +419,24 @@ def exp_21():
     hparams.decoder_self_attention_type = 'unmasked_dilated_1d'
     return hparams
 
+@registry.register_hparams('exp_24')
+def exp_24():
+    hparams = exp_6()
+    hparams.batch_size = 2048
+    return hparams
+
+@registry.register_hparams('exp_25')
+def exp_25():
+    hparams = exp_6()
+    hparams.batch_size = 4096
+    return hparams
+
+@registry.register_hparams('exp_26')
+def exp_26():
+    hparams = exp_6()
+    hparams.batch_size = 8192
+    return hparams
+
 # # throws an error. Needs more time to debug.
 # @registry.register_hparams('exp_n') # tensor dimension error
 # def exp_n():
