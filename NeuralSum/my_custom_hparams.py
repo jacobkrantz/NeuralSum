@@ -315,6 +315,10 @@ def exp_11():
     hparams.enc_dec_attention_type = 'dot_product'
     return hparams
 
+# --------------------------------
+#   Automatic tests of attention
+# --------------------------------
+
 @registry.register_hparams('exp_12')
 def exp_12():
     hparams = exp_6()
@@ -419,6 +423,10 @@ def exp_21():
     hparams.decoder_self_attention_type = 'unmasked_dilated_1d'
     return hparams
 
+# -----------------------------------
+#   Test batch size with no prepend
+# -----------------------------------
+
 @registry.register_hparams('exp_24')
 def exp_24():
     hparams = exp_6()
@@ -434,6 +442,70 @@ def exp_25():
 @registry.register_hparams('exp_26')
 def exp_26():
     hparams = exp_6()
+    hparams.batch_size = 8192 # 10000 uses too much memory
+    return hparams
+
+# ------------------------------------------
+#   Repeat automatic tests with no prepend
+# ------------------------------------------
+
+@registry.register_hparams('exp_27')
+def exp_27():
+    hparams = exp_12()
+    hparams.batch_size = 8192
+    return hparams
+
+@registry.register_hparams('exp_28')
+def exp_28():
+    hparams = exp_13()
+    hparams.batch_size = 8192
+    return hparams
+
+@registry.register_hparams('exp_29')
+def exp_29():
+    hparams = exp_14()
+    hparams.batch_size = 8192
+    return hparams
+
+@registry.register_hparams('exp_30')
+def exp_30():
+    hparams = exp_15()
+    hparams.batch_size = 8192
+    return hparams
+
+@registry.register_hparams('exp_31')
+def exp_31():
+    hparams = exp_16()
+    hparams.batch_size = 8192
+    return hparams
+
+@registry.register_hparams('exp_32')
+def exp_32():
+    hparams = exp_17()
+    hparams.batch_size = 8192
+    return hparams
+
+@registry.register_hparams('exp_33')
+def exp_33():
+    hparams = exp_18()
+    hparams.batch_size = 8192
+    return hparams
+
+@registry.register_hparams('exp_34')
+def exp_34():
+    hparams = exp_19()
+    hparams.batch_size = 8192
+    return hparams
+
+@registry.register_hparams('exp_35')
+def exp_35():
+    hparams = exp_20()
+    hparams.batch_size = 8192
+    return hparams
+
+@registry.register_hparams('exp_36')
+def exp_36():
+    hparams = exp_21()
     hparams.batch_size = 8192
     return hparams
 
