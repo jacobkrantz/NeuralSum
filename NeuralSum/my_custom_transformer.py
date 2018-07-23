@@ -196,7 +196,7 @@ class MyCustomTransformer(my_t2t_model.MyT2TModel):
       return ret
 
   def _greedy_infer(self, features, decode_length):
-    """Fast version of greedy decoding.
+    """just cals slow version of greedy decoding.
 
     Args:
       features: an map of string to `Tensor`
@@ -215,13 +215,8 @@ class MyCustomTransformer(my_t2t_model.MyT2TModel):
       NotImplementedError: If there are multiple data shards.
     """
     # @jacobkrantz HACK: set max length of output manually to 14.
-    decode_length = tf.constant(14)
-
-    # For real-valued modalities use the slow decode path for now.
-    if self._target_modality_is_real:
-      return  super(Transformer, self)._greedy_infer(features, decode_length)
-    with tf.variable_scope(self.name):
-      return self._fast_decode(features, decode_length)
+    return  super(MyCustomTransformer, self)._greedy_infer(
+                    features, decode_length=tf.constant(14))
 
   def _beam_decode(self, features, decode_length, beam_size, top_beams, alpha):
     """Beam search decoding.

@@ -580,7 +580,7 @@ class MyT2TModel(base.Layer):
           beam_size = 1  # No use to run beam-search for a single class.
       if beam_size == 1:
         log_info("Greedy Decoding")
-        results = self._greedy_infer(features, decode_length, use_tpu)
+        results = self._greedy_infer(features, decode_length)
       else:
         log_info("Beam Decoding with beam size %d" % beam_size)
         results = self._beam_decode(features, decode_length, beam_size,
@@ -619,13 +619,12 @@ class MyT2TModel(base.Layer):
     """
     raise NotImplementedError("create your own version of _beam_decode_slow")
 
-  def _greedy_infer(self, features, decode_length, use_tpu=False):
+  def _greedy_infer(self, features, decode_length):
     """A greedy inference method.
     Models should ideally implement a more efficient version of this function.
     Args:
       features: an map of string to `Tensor`
       decode_length: an integer.  How many additional timesteps to decode.
-      use_tpu: A bool, whether to build the inference graph for TPU.
     Returns:
       A dict of decoding results {
           "outputs": integer `Tensor` of decoded ids of shape
