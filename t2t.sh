@@ -19,7 +19,7 @@ TMP_DIR=$USR_DIR/../data/tensor2tensor/tmp
 TRAIN_DIR=$USR_DIR/../data/tensor2tensor/train
 PROBLEM=summary_problem
 MODEL=my_custom_transformer
-HPARAMS=exp_6
+HPARAMS=exp_27
 WORKER_GPU=1
 
 # decoding-specific parameters:
@@ -30,8 +30,8 @@ BEAM_SIZE=2
 ALPHA=0.6
 
 # training-specific parameters:
-TRAIN_STEPS=300
-EVAL_FREQ=300
+TRAIN_STEPS=25000
+EVAL_FREQ=5000
 KEEP_CKPTS=20
 
 export CUDA_VISIBLE_DEVICES=1
