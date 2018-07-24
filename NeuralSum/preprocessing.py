@@ -287,7 +287,7 @@ def _add_duc_summaries_2004(articles):
             if (id not in filename) or (folder not in filename):
                 continue
             with open(filename, 'r') as f:
-                gold_sums.append(f.read().lstrip())
+                gold_sums.append(f.read())
 
         article.gold_summaries = [_tokenize_sentence_generic(s) for s in gold_sums]
 
@@ -395,13 +395,28 @@ def _tokenize_sentence_generic(sentence):
     remove quotations
     replace all numbers with '#'
     """
-    sen = sentence.lower().replace('\n', ' ').replace("''", " ").replace("``", " ")
+    # strip left and right whitespace
+    sen = sentence.lstrip().rstrip()
+
+    sen = sen.lower().replace('\n', ' ').replace("''", " ").replace("``", " ")
     sen = sen.replace("'s", " 's").replace("'re", " 're")
     sen = sen.replace("``", '').replace('(', ' ').replace(')', ' ').replace('*', ' ')
     sen = sen.replace(';', '').replace('"', '').replace('_', ' ').replace(':', ' :')
     sen = sen.replace('?', ' ?').replace(', ', ' , ').replace('!', ' !')
-    sen = re.sub('\d', '#', sen) # replace numbers with '#'
-    sen = sen[:-1] + ' .' if sen[-1] == '.' else sen # space the ending '.'
 
-    sen = " ".join(sen.split()) # remove duplicate whitespace
+    # replace numbers with '#'
+    sen = re.sub('\d', '#', sen)
+
+    # space the ending '.'
+    sen = sen[:-1] + ' .' if sen[-1] == '.' else sen
+
+    # remove duplicate whitespace
+    sen = " ".join(sen.split())
+
+    # space common contractions. ignore won't.
+    sen = sen.replace("isn't", "is n't")
+    sen = sen.replace("hasn't", "has n't")
+    sen = sen.replace("doesn't", "does n't")
+    sen = sen.replace("don't", "do n't")
+    sen = sen.replace("wouldn't", "would n't")
     return sen
