@@ -2,9 +2,9 @@
 # ------------------------------------------------------------------------------
 # Script for running multiple experiments in one shot.
 # 	Saves score reports to ./data/tensor2tensor/saved_models/auto/
-# Call once to make script runnable (user permission. +x grants all):
+# Call this once to make script runnable (user permission. +x grants all):
 # 	>>> chmod u+x script_name.sh
-# t2t-trainer.sh and decode.sh needs line HPARAMS=exp_6
+# t2t.sh needs line HPARAMS=exp_6
 # ------------------------------------------------------------------------------
 
 
@@ -14,8 +14,8 @@
 # Make folder to store generated models
 mkdir ./data/tensor2tensor/saved_models/auto
 
-old=6
-for experiment in 27 28 29 30 31 32 33 34 35 36
+old=27
+for experiment in 26 27 28 29 30 31 32 33 34 35 36
 do
 	echo "Running experiment $experiment..."
 
@@ -35,6 +35,6 @@ do
 
 	# Rename output files to experiment-specific name
 	mv ./data/out/vert_reports/vert_scores* ./data/tensor2tensor/saved_models/auto/vert_exp_$experiment.json
-	mv ./data/duc2004/generated.txt ./data/tensor2tensor/saved_models/auto/generated_$experiment.txt
+	mv ./data/duc2004/generated.txt ./data/tensor2tensor/saved_models/auto/exp_$experiment/
 done
 echo "All experiments done."

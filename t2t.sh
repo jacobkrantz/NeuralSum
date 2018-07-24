@@ -26,8 +26,8 @@ WORKER_GPU=1
 # location of file containing inputs to test against:
 DECODE_FILE=./data/duc2004/sentences.txt
 DECODE_FILE_OUT=./data/duc2004/generated.txt
-BEAM_SIZE=2
-ALPHA=0.6
+BEAM_SIZE=8
+ALPHA=5.0
 
 # training-specific parameters:
 TRAIN_STEPS=25000

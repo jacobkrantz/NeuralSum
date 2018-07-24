@@ -74,9 +74,7 @@ class SummaryProblem(text_problems.Text2TextProblem):
         """
         del data_dir, tmp_dir, dataset_split
 
-        # leaves out 10k articles for eval if desired in the future.
-        articles = parse_gigaword(limit=3793957, randomize=False)
-
+        articles = parse_gigaword(limit=None, randomize=False)
         for art in articles:
             for summ in art.gold_summaries:
                 yield {
@@ -85,7 +83,7 @@ class SummaryProblem(text_problems.Text2TextProblem):
                 }
 
     def eval_metrics(self):
-        """ Override: ignore some metrics """
+        """ Override: include just these metrics """
         return [
             metrics.Metrics.ACC,
             metrics.Metrics.NEG_LOG_PERPLEXITY,
@@ -103,7 +101,6 @@ class SummaryProblemSmall(text_problems.Text2TextProblem):
     """
     @property
     def approx_vocab_size(self):
-        # made this larger just in case.
         return 2**15  # ~32k
 
     @property
@@ -134,7 +131,9 @@ class SummaryProblemSmall(text_problems.Text2TextProblem):
             be iterated over once. Saves on memory.
         """
         del data_dir, tmp_dir, dataset_split
-        articles = parse_gigaword(limit=950989, randomize=False) # which leaves out 10k articles.
+
+        # Cuts out 2,852,968 articles (leaves 25%).
+        articles = parse_gigaword(limit=950989, randomize=False)
 
         for art in articles:
             for summ in art.gold_summaries:
@@ -144,7 +143,7 @@ class SummaryProblemSmall(text_problems.Text2TextProblem):
                 }
 
     def eval_metrics(self):
-        """ Override: ignore some metrics """
+        """ Override: include just these metrics """
         return [
             metrics.Metrics.ACC,
             metrics.Metrics.NEG_LOG_PERPLEXITY,
