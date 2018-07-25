@@ -208,6 +208,4 @@ class Vert(object):
         )))
 
     def _calc_vert_score_post(self, similarity, dissimilarity):
-        if dissimilarity == 0.0:
-            return 1.0
-        return float(np.tanh(float(similarity) / dissimilarity**(1./3.)))
+        return (1./2.) * (1. + (similarity-((1./5.) * dissimilarity)))
