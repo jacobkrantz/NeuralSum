@@ -17,4 +17,6 @@ class DucArticle:
         s += '\n' + "Summaries: "
         for i, summary in enumerate(self.gold_summaries):
             s += '\n' + str(i+1) + ": " + summary
+        if self.generated_summary != '':
+            s += '\n' + 'Generated Summary: ' + self.generated_summary
         return s

@@ -56,7 +56,7 @@ class Vert(object):
         """
         hyps, refs = [],[]
         for art in articles:
-            hyps += [art.generated_summary for i in range(len(article.gold_summaries))]
+            hyps += [art.generated_summary for i in range(len(art.gold_summaries))]
             refs += art.gold_summaries
         return self.score(hyps, refs, rouge_type=rouge_type, verbose=verbose)
 
