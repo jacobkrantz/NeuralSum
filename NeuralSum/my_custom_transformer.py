@@ -28,7 +28,7 @@ from __future__ import print_function
 from six.moves import range  # pylint: disable=redefined-builtin
 
 from tensor2tensor.data_generators import librispeech
-from tensor2tensor.layers import common_attention
+# from tensor2tensor.layers import common_attention
 from tensor2tensor.layers import common_hparams
 from tensor2tensor.layers import common_layers
 from tensor2tensor.utils import beam_search
@@ -36,6 +36,7 @@ from tensor2tensor.utils import expert_utils
 from tensor2tensor.utils import registry
 from tensor2tensor.utils import t2t_model
 from utils import my_t2t_model
+from utils import my_common_attention_165 as common_attention
 
 import tensorflow as tf
 

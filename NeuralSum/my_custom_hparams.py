@@ -511,13 +511,12 @@ def exp_36():
 
 @registry.register_hparams('exp_37')
 def exp_37():
-    # not yet functional: need to make rel_local_mask_right which is available
-    # on master but none of the release versions yet (I am running t2t 1.6.5)
     hparams = exp_6()
     hparams.encoder_self_attention_type = 'rel_local_mask_right'
     hparams.decoder_self_attention_type = 'rel_local_mask_right'
     hparams.enc_dec_attention_type = 'dot_product'
-    hparams.batch_size = 8192
+    hparams.batch_size = 512
+    hparams.block_length = 128 # default
     return hparams
 
 # # throws an error. Needs more time to debug.
