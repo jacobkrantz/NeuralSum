@@ -34,6 +34,9 @@ TRAIN_STEPS=25000
 EVAL_FREQ=5000
 KEEP_CKPTS=20
 
+# Easiest to just control batch size here instead of in 'my_custom_hparams.py'.
+BATCH_SIZE=8192
+
 export CUDA_VISIBLE_DEVICES=1
 
 # decode_hparams should include "extra_length"=14, but it does not work.
@@ -56,6 +59,7 @@ else
     	--problem=$PROBLEM \
     	--model=$MODEL \
     	--hparams_set=$HPARAMS \
+      --hparams="batch_size=$BATCH_SIZE" \
     	--data_dir=$DATA_DIR \
     	--output_dir=$TRAIN_DIR \
     	--t2t_usr_dir=$USR_DIR \
@@ -72,6 +76,7 @@ else
         --problem=$PROBLEM \
         --model=$MODEL \
         --hparams_set=$HPARAMS \
+        --hparams="batch_size=$BATCH_SIZE" \
         --output_dir=$TRAIN_DIR \
         --t2t_usr_dir=$USR_DIR \
         --decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA","force_decode_length"=True \
