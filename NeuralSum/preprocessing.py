@@ -20,12 +20,9 @@ Methods:
     - parse_duc_2004(limit=None, randomize=False)
     - parse_duc_2003(limit=None, randomize=False)
     - parse_gigaword(limit=None, randomize=False)
-    - load_word_embeddings()
-    - get_vocabulary(articles)
     - get_max_sentence_len(articles)
     - get_max_summary_len(articles)
     - get_sen_sum_pairs(articles)
-    - fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_length=None)
     - display_articles(articles, number_to_display, random=False)
 """
 
@@ -73,41 +70,6 @@ def parse_gigaword(limit=None, randomize=False):
 
     return articles if limit is None else articles[:limit]
 
-def load_word_embeddings():
-    """
-    Reads all of the word embeddings (GloVe) into a dictionary.
-    """
-    embeddings = dict()
-    with open(config['glove_embeddings_file'], 'r') as f:
-        for line in f:
-            values = line.split()
-            word = values[0]
-            coefs = asarray(values[1:], dtype='float32',)
-            embeddings[word] = coefs
-
-    return embeddings
-
-def get_vocabulary(articles):
-    """
-    Decision here: what words to include in the vocabulary. We don't want to
-        use the entire GloVe vector set, because the model would be too large.
-    possibilities:
-        - use sentences and gold summaries
-        - use entire articles
-        - use entire gigaword
-        - use just sentences
-    currently doing: use sentences and gold summaries
-    Returns:
-        set<string> vocab
-    """
-    vocab = set()
-    for article in articles:
-        [vocab.add(w) for w in article.sentence.split()]
-        for summary in article.gold_summaries:
-            [vocab.add(w) for w in summary.split()]
-
-    return vocab
-
 def get_max_sentence_len(articles):
     """
     Get the maximum length of full sentence within the articles list.
@@ -149,74 +111,6 @@ def get_sen_sum_pairs(articles):
 
     assert(len(sentences) == len(summaries))
     return sentences, summaries
-
-
-def fit_text(sentences, summaries, input_seq_max_length=None, target_seq_max_length=None):
-    """
-    This function was adapted from chen 0040 in the GitHub repository:
-        https://github.com/chen0040/keras-text-summarization
-    Args:
-        sentences (list<string>)
-        summaries (list<string>)
-        input_seq_max_length (int): defaults to config value.
-        target_seq_max_length (int): defaults to config value.
-    Returns:
-        dict of model configuration.
-    """
-    if input_seq_max_length is None:
-        input_seq_max_length = config["max_input_seq_length"]
-    if target_seq_max_length is None:
-        target_seq_max_length = config["max_target_vocal_size"]
-    input_counter = Counter()
-    target_counter = Counter()
-    max_input_seq_length = 0
-    max_target_seq_length = 0
-
-    for line in sentences:
-        text = [word.lower() for word in line.split(' ')]
-        seq_length = len(text)
-        if seq_length > input_seq_max_length:
-            text = text[0:input_seq_max_length]
-            seq_length = len(text)
-        for word in text:
-            input_counter[word] += 1
-        max_input_seq_length = max(max_input_seq_length, seq_length)
-
-    for line in summaries:
-        line2 = 'START ' + line.lower() + ' END'
-        text = [word for word in line2.split(' ')]
-        seq_length = len(text)
-        if seq_length > target_seq_max_length:
-            text = text[0:target_seq_max_length]
-            seq_length = len(text)
-        for word in text:
-            target_counter[word] += 1
-            max_target_seq_length = max(max_target_seq_length, seq_length)
-
-    input_word2idx = dict()
-    for idx, word in enumerate(input_counter.most_common(config['max_input_vocab_size'])):
-        input_word2idx[word[0]] = idx + 2
-    input_word2idx['PAD'] = 0
-    input_word2idx['UNK'] = 1
-    input_idx2word = dict([(idx, word) for word, idx in input_word2idx.items()])
-
-    target_word2idx = dict()
-    for idx, word in enumerate(target_counter.most_common(config['max_target_vocal_size'])):
-        target_word2idx[word[0]] = idx + 1
-    target_word2idx['UNK'] = 0
-
-    target_idx2word = dict([(idx, word) for word, idx in target_word2idx.items()])
-
-    return {
-        'input_word2idx': input_word2idx,
-        'input_idx2word': input_idx2word,
-        'target_word2idx': target_word2idx,
-        'target_idx2word': target_idx2word,
-        'num_input_tokens': len(input_word2idx),
-        'num_target_tokens': len(target_word2idx),
-        'max_input_seq_length': max_input_seq_length,
-        'max_target_seq_length': max_target_seq_length
-    }
 
 def display_articles(articles, number_to_display=None, randomize=False):
     """

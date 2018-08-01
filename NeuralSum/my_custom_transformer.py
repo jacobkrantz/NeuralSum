@@ -36,7 +36,7 @@ from tensor2tensor.utils import expert_utils
 from tensor2tensor.utils import registry
 from tensor2tensor.utils import t2t_model
 from utils import my_t2t_model
-from utils import my_common_attention_165 as common_attention
+from utils import my_common_attention as common_attention
 
 import tensorflow as tf
 

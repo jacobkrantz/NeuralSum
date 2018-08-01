@@ -12,7 +12,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for attention."""
+"""
+Utilities for attention.
+I copied this from source and added rel_local_mask_right attention
+    from master.
+I did not update the library because I was scared to build T2T
+    from scratch the day before my paper was due.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function

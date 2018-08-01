@@ -1,9 +1,8 @@
 {
-	"log_level": "info",
 	"vert": {
 		"rouge_metric": "recall",
 		"output_report": true,
-		"reports_folder": "./data/out/vert_reports/"
+		"reports_folder": "./data/reports/"
 	},
 	"duc4_sentences_folder": "./data/duc2004/raw/docs/",
 	"duc3_sentences_folder": "./data/duc2003/docs/",
@@ -16,25 +15,14 @@
 	"duc3_eval_folder": "./data/duc2003/abstracts/models/",
 	"gigaword_sen_folder": "./data/gigaword/train/train.article.txt",
 	"gigaword_sum_folder": "./data/gigaword/train/train.title.txt",
-	"glove_embeddings_file": "./data/glove_embeddings/glove.6B.50d.txt",
-	"max_input_seq_length": 500,
-	"max_target_seq_length": 50,
-	"max_input_vocab_size": 10000,
-	"max_target_vocal_size": 2000,
-	"batch_size": 32,
-	"epochs": 15,
-	"model_output_path": "./data/out/models/",
 	"verbose": 1,
-	"model_config_file": "RNN-model-1-config.npy",
-	"model_architecture_file": "RNN-model-1-architecture.json",
-	"model_weight_file": "RNN-model-1-weights.h5",
 	"infersent": {
-		"glove_file": "./data/glove_embeddings/glove.840B.300d.txt",
-		"trained_model": "./data/infersent_specific/infersent.allnli.pickle",
+		"glove_file": "./data/vert/glove.840B.300d.txt",
+		"trained_model": "./data/vert/infersent.allnli.pickle",
 		"vocab_size": 1000000
 	},
 	"wmd": {
-		"word2vec": "./data/word2vec_embeddings/GoogleNews-vectors-negative300.bin.gz",
+		"word2vec": "./data/vert/GoogleNews-vectors-negative300.bin.gz",
 		"save_memory": false,
 		"normalize": false
 	}
