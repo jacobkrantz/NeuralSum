@@ -1,24 +1,26 @@
 # NeuralSum
-Abstractive Sentence Summarization with Attentive Neural Techniques. Presents a new way to evaluate auto-generated abstractive summaries.  
+Abstractive Sentence Summarization with Attentive Neural Techniques. Presents a new way to evaluate auto-generated abstractive summaries. If you want to use this library to generate sentence summaries, contact us by email for the required data folder. Otherwise, you have to provide your own data, a way to process it, and change the configurations to point to where this data is located.  
 
 ## Using Tensor2Tensor  
-There are 5 scripts for using Tensor2Tensor models, 3 shell and 2 python. These scripts can be modified to utilize different models, data, and other parameters. For model-specific parameters, edit `/NeuralSum/NeuralSum/my_custom_hparams.py`. For using the crappy model that does not utilize Tensor2Tensor, start everything with `run.py`. This also allows you to play with Keras models quite rapidly. To do so, make model adjustments in `/NeuralSum/NeuralSum/summary_model.py`.  
+This project uses the Tensor2Tensor library. The primary run script, `t2t.sh`, can be modified to utilize different models, data, and other parameters. For model-specific parameters, edit `/NeuralSum/NeuralSum/my_custom_hparams.py`. If you add custom hyperparameters, models, modalities, or problems, make sure they are all registered. For info on how to do that, take a look at the  [Tensor2Tensor](https://github.com/tensorflow/tensor2tensor) source code and docs.
 
-#### Scripts:  
-Use these for end to end model usage.  
-- `datagen.sh`: generate the data to be trained and tested with.  
-- `t2t-trainer.sh`: trains a model using the given parameters.  
-- `decode.sh`: Run inputs through the model. Can either be done iteractively or from files.  
-- `process_duc.py`: extract sentences and summaries for the raw folders of DUC2004 so that they can easily be evaluated against in the next script. Can be called for loading either DUC2003 or DUC2004 as such:  
-`>>> process_duc.py 2003`  
-`>>> process_duc.py 2004`  
-- `evaluate_on_duc.py`: evaluate the various scores of generated summaries against target summaries. Make sure that the global variable `DUC` is set either to `duc2003` or `duc2004` depending on which you want to use.  
+#### Overview: Sequence of Events  
+Follow these steps for end to end model usage. The script `multirun.sh` does each of these steps for each experiment number specified.  
+1. Generate the data to be trained and tested with. Make sure the proper T2TProblem is selected.  
+Relevant command: `>>> ./t2t.sh datagen`
+2. Train the model on the data that has already been generated. This requires providing a T2TProblem, a T2TModel, and a registered HParams set.
+Relevant command: `>>> ./t2t.sh train`
+3. Prepare the test data to be tested against. This is the parsing of either DUC2003 or DUC2004 from their raw folders to flat files containing the sentences and the target summaries.
+Relevant command: `>>> python process_duc.py [--which_duc=(2003|2004)]`
+4. Generate summaries from the trained model given the sentences of either DUC2003 or DUC2004. Make sure `DECODE_FILE` and `DECODE_FILE_OUT` in `t2t.sh` point to the DUC folder desired.
+Relevant command: `>>> ./t2t.sh decode`
+5. Score the generated summaries against the target summaries and print out a report with the results. If `save_report=True`, saves a json file to the reports folder. This script and all the evaluation metrics will soon be moved to a different repository.
+Relevant command: `>>> python evaluate_on_duc.py [--which_duc=(2003|2004)] [--save_report=(True|False)]`
 
 #### Hyperparameter Sets  
 Hyperparameter sets (Hparams) are objects containing all parameters except certain decoding params. All sets are found in `my_custom_hparams.py`.  
-- `exp_6`: base parameters for the Transformer. Used in experiments 1-6.  
-- `exp_7`: "big" parameters for a more complex Transformer.  
-- `exp_11` - `exp_14`: based off of `exp_6` with attention parameter modifications.
+- `exp_6`: base parameters for the Transformer. All other hyperparameter sets are based off this set.  
+- `exp_n`: subsequent experiments. Currently hparams set `exp_27` generates the highest ROUGE and VERT scores if you play with certain decoding parameters and training step numbers.  
 
 #### T2T Problems  
 Problems define the data used and which metrics to be included for EVAL mode.  
@@ -34,7 +36,7 @@ All datasets are stored in a specific way in the ./data folder. You can ask the 
 - Word2Vec embeddings  
 
 ## Unit Tests  
-To run all unit tests, execute:  
+Could use some work. To run all unit tests, execute:  
 `>>> python -m unittest discover -s tests`  
 
 ##  Evaluation Process  
@@ -92,10 +94,14 @@ Evaluation Scores:
 #### Conclusion  
 Notice that the ROUGE scores of examples 1 & 2 stayed the exact same, not differentiating between a clearly better summary and a clearly worse summary. On the other hand, the cosine similarity was able to identify the difference the bad summary showed, punishing the similarity score by 7.6%. The acceptable summary in Example 1 was only punished 2.1%. When looking at the Word Mover Distance (WMD), we see that the bad summary was given a 24% larger distance from the target than the acceptable summary (0.512 vs 0.418). Thus WMD also shows the ability to judge semantically. Cos-Sim and WMD metrics are different from each other: Cos-Sim is a neural approach using sentence vectors while WMD is an aggregated distance measurement between a sentence's word vectors. Further distinguishing them is the source of word vectors: GloVe for Cos-Sim, and Word2Vec for WMD. Cos-Sim is of course using cosine similarity while WMD uses Euclidean distance. Finally, Cos-Sim is a value to be maximized whereas WMD is a value to be minimized. Because of these differences, both metrics provide value in analyzing abstractive summaries.  
 
+## Contact  
+Author: Jacob Krantz  
+Email: jkrantz@zagmail.gonzaga.edu  
+
 ## Acknowledgements  
 
-This code is being developed for research purposes at the University of Colorado at Colorado Springs. This is an REU project sponsored by the NSF.  
-Advisor: Dr. Jugal Kalita  
+This code has been developed for research purposes at the University of Colorado at Colorado Springs. This is an REU project with work supported by the National Science Foundation under Grant No. 1659788.  
+Advisor: Dr. Jugal Kalita   
 
 Facebook Research's [InferSent](https://github.com/facebookresearch/InferSent) codebase.  
 Full implementation of ROGUE metric [here](https://github.com/pltrdy/rouge).  
