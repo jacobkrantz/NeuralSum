@@ -1,29 +1,13 @@
 {
-	"vert": {
-		"rouge_metric": "recall",
-		"output_report": true,
-		"reports_folder": "./data/reports/"
-	},
 	"duc4_sentences_folder": "./data/duc2004/raw/docs/",
 	"duc3_sentences_folder": "./data/duc2003/docs/",
 	"duc_ending_exceptions": ["B.J.", "mr.", "mrs.",
-														"Mr.", "Mrs.", "Dr.",
-														"Ms.", "Drs.", "drs.",
-														"dr.", "ms.", "et.",
-														"No."],
+							  "Mr.", "Mrs.", "Dr.",
+							  "Ms.", "Drs.", "drs.",
+							  "dr.", "ms.", "et.",
+							  "No."],
 	"duc4_eval_folder": "./data/duc2004/raw/eval/",
 	"duc3_eval_folder": "./data/duc2003/abstracts/models/",
 	"gigaword_sen_folder": "./data/gigaword/train/train.article.txt",
 	"gigaword_sum_folder": "./data/gigaword/train/train.title.txt",
-	"verbose": 1,
-	"infersent": {
-		"glove_file": "./data/vert/glove.840B.300d.txt",
-		"trained_model": "./data/vert/infersent.allnli.pickle",
-		"vocab_size": 1000000
-	},
-	"wmd": {
-		"word2vec": "./data/vert/GoogleNews-vectors-negative300.bin.gz",
-		"save_memory": false,
-		"normalize": false
-	}
 }

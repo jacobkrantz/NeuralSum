@@ -30,12 +30,12 @@ BEAM_SIZE=8
 ALPHA=5.0
 
 # training-specific parameters:
-TRAIN_STEPS=25000
-EVAL_FREQ=5000
-KEEP_CKPTS=20
+TRAIN_STEPS=1000
+EVAL_FREQ=1000
+KEEP_CKPTS=4
 
 # Easiest to just control batch size here instead of in 'my_custom_hparams.py'.
-BATCH_SIZE=8192
+BATCH_SIZE=1024
 
 export CUDA_VISIBLE_DEVICES=1
 
